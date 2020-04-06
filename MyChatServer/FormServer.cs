@@ -34,10 +34,11 @@ namespace MyChatServer
             Server.SearchFriendsRequest += Server_SearchFriendsRequest;
             Server.AddFriendRequest += Server_AddFriendRequest;
             Server.GetMyFriendsRequest += Server_GetMyFriendsRequest;
+            Server.GetUserInfoRequest += Server_GetUserInfoRequest;
         }
 
         //发起等登陆请求
-        private Tuple<int, List<User>> Server_UserLoginRequest(Tuple<string, string> arg)
+        private Tuple<int, List<User>> Server_UserLoginRequest(Tuple<string, string, string> arg)
         {
             int code = -1;
             List<User> friends = new List<User>();
@@ -48,7 +49,9 @@ namespace MyChatServer
                 //成功登陆就打印出来
                 if (code == 0)
                 {
-                    // 查询所有好友
+                    //获取该用户信息
+                    User userInfo = mongoDBOperate.GetUserInfo(arg.Item1);
+                    // 查询该用户所有好友
                     List<User> users = mongoDBOperate.GetMyFriends(arg.Item1);
                     friends.AddRange(users);
                     // 获取在线好友
@@ -61,8 +64,12 @@ namespace MyChatServer
                     }));
                     */
 
-                    // 将当前用户加入在线列表。
+                    // 将在线用户加入在线列表。
                     lBUsername.Items.Add(arg.Item1);
+                    lVOnlineUsers.Items.Add(new ListViewItem(new string[]
+               {
+                     userInfo.UserName,userInfo.NickName,arg.Item3
+               }));
                 }
             }));
             return new Tuple<int, List<User>>(code, friends);
@@ -90,8 +97,8 @@ namespace MyChatServer
                 allUsers = mongoDBOperate.SearchFriends(e.Item1);
                 code = 0;
             }));
-            
-            return new Tuple<int, List<User>> (0, allUsers);
+
+            return new Tuple<int, List<User>>(code, allUsers);
         }
 
         //添加好友，添加本人ID和需要添加的好友ID
@@ -119,5 +126,17 @@ namespace MyChatServer
             }));
             return new Tuple<int, List<User>>(code, MyFriends);
         }
+        private Tuple<int, User> Server_GetUserInfoRequest(Tuple<string> e)
+        {
+            int code = -1;
+            User userInfo = new User();
+            Invoke(new Action(() =>
+            {
+                userInfo = mongoDBOperate.GetUserInfo(e.Item1);
+                code = 0;
+            }));
+            return new Tuple<int, User>(code, userInfo);
+        }
+
     }
 }

@@ -25,11 +25,10 @@ namespace MongoDBOperator
             int code = -1;
             try
             {
-
                 Document filter = new Document();
                 filter.Add("UserName", userInfo.UserName);
-                List<User> list = UserHelper.SelectMore(filter);
-                if (list.Count > 0)
+                List<User> lis = UserHelper.SelectMore(filter);
+                if (lis.Count > 0)
                 {
                     code = 1;
                 }
@@ -53,12 +52,13 @@ namespace MongoDBOperator
         public int login(string userName, string passWord)
         {
             int code = -1;
+            User user = null;
             try
             {
                 Document filter = new Document();
                 filter.Add("UserName", userName);
                 filter.Add("Password", passWord);
-                User user = UserHelper.SelectOne(filter);
+                user = UserHelper.SelectOne(filter);
                 if (user == null)
                 {
                     code = 1;
@@ -88,8 +88,8 @@ namespace MongoDBOperator
             List<User> users = new List<User>();
             Document filter = new Document();
             filter.Add("UserID", Username);
-            List<Friends> friends = FriendsHelper.SelectMore(filter);   
-            foreach(var friend in friends)
+            List<Friends> friends = FriendsHelper.SelectMore(filter);
+            foreach (var friend in friends)
             {
                 filter = new Document();
                 filter.Add("UserName", friend.FriendID);
@@ -103,6 +103,12 @@ namespace MongoDBOperator
         public void AddFriend(Friends friends)
         {
             FriendsHelper.Insert(friends);
+        }
+        //获取用户信息
+        public User GetUserInfo(string UserName)
+        {
+            User userInfo = UserHelper.SelectOne(new Document("UserName",UserName));
+            return userInfo;
         }
     }
 }

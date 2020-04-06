@@ -27,6 +27,7 @@ namespace ActiveMQOperator
         public event EventHandler<List<User>> FriendsSearchedResponse;
         public event EventHandler<int> AddFriendResponse;
         public event EventHandler<Tuple<int, List<User>>> GetMyFriendsResponse;
+        public event EventHandler<Tuple<int, User>> GetUserInfoResponse;
 
         //接收信息
         private void ActiveMQ_Received(object sender, string e)
@@ -102,6 +103,20 @@ namespace ActiveMQOperator
                                         });
 
                                         GetMyFriendsResponse?.Invoke(this, data.Result);
+                                    }
+                                }
+                                break;
+                            case nameof(GetUserInfo):
+                                {
+                                    if (Sessions.ContainsKey(package.SessionID))
+                                    {
+                                        var data = JsonConvert.DeserializeAnonymousType(package.Data, new
+                                        {
+                                            Result = default(Tuple<int, User>)
+
+                                        });
+
+                                        GetUserInfoResponse?.Invoke(this, data.Result);
                                     }
                                 }
                                 break;
@@ -186,6 +201,18 @@ namespace ActiveMQOperator
         {
             var id = Guid.NewGuid();
             var package = new Package(id, "Request", nameof(GetMyFriends), JsonConvert.SerializeObject(new
+            {
+                Address,
+                UserName
+            }));
+            Sessions[id] = package;
+
+            activeMQ.Send("MyChat", package.ToString());
+        }
+        public void GetUserInfo(string UserName)
+        {
+            var id = Guid.NewGuid();
+            var package = new Package(id, "Request", nameof(GetUserInfo), JsonConvert.SerializeObject(new
             {
                 Address,
                 UserName

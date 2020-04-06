@@ -66,16 +66,18 @@ namespace MyChat
                         node.Nodes.Add(new TreeNode(friend.NickName));
                     }
                 }
-               
-                
+
+
 
             }));
 
 
         }
+        FormModify formModify;
         private void modifyData_Click(object sender, EventArgs e)
         {
-
+            formModify = new FormModify(UserName, Client);
+            formModify.ShowDialog();
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {

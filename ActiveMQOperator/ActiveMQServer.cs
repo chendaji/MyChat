@@ -19,13 +19,15 @@ namespace ActiveMQOperator
         //前面参数输入，后面返回参数
         public event Func<Tuple<User>, int> RegisterUserRequest;
 
-        public event Func<Tuple<string, string>, Tuple<int, List<User>>> UserLoginRequest;
+        public event Func<Tuple<string, string,string>, Tuple<int, List<User>>> UserLoginRequest;
 
         public event Func<Tuple<string, string>, Tuple<int, List<User>>> SearchFriendsRequest;
 
         public event Func<Tuple<string, string>, int> AddFriendRequest;
 
         public event Func<Tuple<string>, Tuple<int, List<User>>> GetMyFriendsRequest;
+
+        public event Func<Tuple<string>, Tuple<int, User>> GetUserInfoRequest;
 
         private void ActiveMQ_Received(object sender, string e)
         {
@@ -70,7 +72,7 @@ namespace ActiveMQOperator
                                     if (data.Address == null) break;
 
                                     // TODO:数据库处理。
-                                    var Result = UserLoginRequest?.Invoke(new Tuple<string, string>(data.Username, data.Password));
+                                    var Result = UserLoginRequest?.Invoke(new Tuple<string, string,string >(data.Username, data.Password,data.Address));
 
                                     // TODO:响应客户端。
                                     activeMQ.Send(data.Address, new Package(package.SessionID, "Response", package.Method, JsonConvert.SerializeObject(new
@@ -133,6 +135,26 @@ namespace ActiveMQOperator
 
                                     // TODO:数据库处理。
                                     var Result = GetMyFriendsRequest?.Invoke(new Tuple<string>(data.UserName));
+
+                                    // TODO:响应客户端。
+                                    activeMQ.Send(data.Address, new Package(package.SessionID, "Response", package.Method, JsonConvert.SerializeObject(new
+                                    {
+                                        Result
+                                    })).ToString());
+                                }
+                                break;
+                            case "GetUserInfo":
+                                {
+                                    var data = JsonConvert.DeserializeAnonymousType(package.Data, new
+                                    {
+                                        Address = default(string),
+                                        UserName = default(string)
+                                    });
+
+                                    if (data.Address == null) break;
+
+                                    // TODO:数据库处理。
+                                    var Result = GetUserInfoRequest?.Invoke(new Tuple<string>(data.UserName));
 
                                     // TODO:响应客户端。
                                     activeMQ.Send(data.Address, new Package(package.SessionID, "Response", package.Method, JsonConvert.SerializeObject(new
