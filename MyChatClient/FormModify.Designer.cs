@@ -51,6 +51,7 @@
             this.bModify.TabIndex = 0;
             this.bModify.Text = "确认";
             this.bModify.UseVisualStyleBackColor = true;
+            this.bModify.Click += new System.EventHandler(this.bModify_Click);
             // 
             // label1
             // 
@@ -93,9 +94,9 @@
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(188, 74);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(52, 15);
+            this.label6.Size = new System.Drawing.Size(67, 15);
             this.label6.TabIndex = 1;
-            this.label6.Text = "密码：";
+            this.label6.Text = "新密码：";
             // 
             // label7
             // 

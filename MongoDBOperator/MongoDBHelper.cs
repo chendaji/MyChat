@@ -97,6 +97,36 @@ namespace MongoDBOperator
         {
             mongoCollection.Update(t, func, true);
         }
+
+        #endregion
+        #region 读取单条记录
+        /// <summary>
+        ///读取单条记录
+        /// </summary>
+        /// <param name="person"></param>
+        /// <returns></returns>
+        public T Single(Expression<Func<T, bool>> func)
+        {
+
+            try
+            {
+                mongo.Connect();
+
+                var db = mongo.GetDatabase(databaseName);
+
+                var single = mongoCollection.Linq().FirstOrDefault(func);
+
+                mongo.Disconnect();
+
+                return single;
+
+            }
+            catch (Exception)
+            {
+                mongo.Disconnect();
+                throw;
+            }
+        }
         #endregion
 
         #region delete

@@ -35,6 +35,7 @@ namespace MyChatServer
             Server.AddFriendRequest += Server_AddFriendRequest;
             Server.GetMyFriendsRequest += Server_GetMyFriendsRequest;
             Server.GetUserInfoRequest += Server_GetUserInfoRequest;
+            Server.UpdateUserInfoRequest += Server_UpdateUserInfoRequest;
         }
 
         //发起等登陆请求
@@ -136,6 +137,17 @@ namespace MyChatServer
                 code = 0;
             }));
             return new Tuple<int, User>(code, userInfo);
+        }
+        //更新用户信息
+        private Tuple<int> Server_UpdateUserInfoRequest(Tuple<User> e)
+        {
+            int code = -1;
+            Invoke(new Action(() =>
+            {
+                mongoDBOperate.UpdateUserInfo(e.Item1);
+                code = 0;
+            }));
+            return new Tuple<int>(code);
         }
 
     }

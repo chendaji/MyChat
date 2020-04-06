@@ -28,6 +28,7 @@ namespace ActiveMQOperator
         public event EventHandler<int> AddFriendResponse;
         public event EventHandler<Tuple<int, List<User>>> GetMyFriendsResponse;
         public event EventHandler<Tuple<int, User>> GetUserInfoResponse;
+        public event EventHandler<Tuple<int>> UpdateUserInfoResponse;
 
         //接收信息
         private void ActiveMQ_Received(object sender, string e)
@@ -120,6 +121,20 @@ namespace ActiveMQOperator
                                     }
                                 }
                                 break;
+                            case nameof(UpdateUserInfo):
+                                {
+                                    if (Sessions.ContainsKey(package.SessionID))
+                                    {
+                                        var data = JsonConvert.DeserializeAnonymousType(package.Data, new
+                                        {
+                                            Result = default(Tuple<int>)
+
+                                        });
+
+                                        UpdateUserInfoResponse?.Invoke(this, data.Result);
+                                    }
+                                }
+                                break;
                             default:
                                 break;
                         }
@@ -209,6 +224,7 @@ namespace ActiveMQOperator
 
             activeMQ.Send("MyChat", package.ToString());
         }
+        //获取用户信息
         public void GetUserInfo(string UserName)
         {
             var id = Guid.NewGuid();
@@ -216,6 +232,19 @@ namespace ActiveMQOperator
             {
                 Address,
                 UserName
+            }));
+            Sessions[id] = package;
+
+            activeMQ.Send("MyChat", package.ToString());
+        }
+        //更新用户信息
+        public void UpdateUserInfo(User user)
+        {
+            var id = Guid.NewGuid();
+            var package = new Package(id, "Request", nameof(UpdateUserInfo), JsonConvert.SerializeObject(new
+            {
+                Address,
+                user
             }));
             Sessions[id] = package;
 

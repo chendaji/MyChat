@@ -1,10 +1,12 @@
-﻿using MongoDB;
+﻿using DelegateDecompiler;
+using MongoDB;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -109,6 +111,11 @@ namespace MongoDBOperator
         {
             User userInfo = UserHelper.SelectOne(new Document("UserName",UserName));
             return userInfo;
+        }
+        //更新用户信息
+        public void UpdateUserInfo(User user)
+        {
+            UserHelper.Insert(user, i => i.Age == user.Age);
         }
     }
 }

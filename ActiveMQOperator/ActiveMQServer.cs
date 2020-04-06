@@ -29,6 +29,8 @@ namespace ActiveMQOperator
 
         public event Func<Tuple<string>, Tuple<int, User>> GetUserInfoRequest;
 
+        public event Func<Tuple<User>, Tuple<int>> UpdateUserInfoRequest;
+
         private void ActiveMQ_Received(object sender, string e)
         {
             var package = JsonConvert.DeserializeObject<Package>(e);
@@ -155,6 +157,26 @@ namespace ActiveMQOperator
 
                                     // TODO:数据库处理。
                                     var Result = GetUserInfoRequest?.Invoke(new Tuple<string>(data.UserName));
+
+                                    // TODO:响应客户端。
+                                    activeMQ.Send(data.Address, new Package(package.SessionID, "Response", package.Method, JsonConvert.SerializeObject(new
+                                    {
+                                        Result
+                                    })).ToString());
+                                }
+                                break;
+                            case "UpdateUserInfo":
+                                {
+                                    var data = JsonConvert.DeserializeAnonymousType(package.Data, new
+                                    {
+                                        Address = default(string),
+                                        User = default(User)
+                                    });
+
+                                    if (data.Address == null) break;
+
+                                    // TODO:数据库处理。
+                                    var Result = UpdateUserInfoRequest?.Invoke(new Tuple<User>(data.User));
 
                                     // TODO:响应客户端。
                                     activeMQ.Send(data.Address, new Package(package.SessionID, "Response", package.Method, JsonConvert.SerializeObject(new

@@ -16,6 +16,7 @@ namespace MyChat
     {
         ActiveMQClient Client;
         string UserName;
+        User userInfo;
         public FormModify(string UserName, ActiveMQClient Client)
         {
             InitializeComponent();
@@ -23,17 +24,53 @@ namespace MyChat
             this.Client = Client;
             Client.GetUserInfo(UserName);
             Client.GetUserInfoResponse += Client_GetUserInfoResponse;
+            Client.UpdateUserInfoResponse += Client_UpdateUserInfoResponse;
         }
         private void Client_GetUserInfoResponse(object sender, Tuple<int, User> result)
         {
             Invoke(new Action(() =>
             {
-                User userInfo = result.Item2;
+                userInfo = result.Item2;
                 tUserName.Text = userInfo.UserName;
                 tNickName.Text = userInfo.NickName;
                 tSex.Text = userInfo.Sex;
                 tAge.Text = userInfo.Age + "";
             }));
+        }
+        private void Client_UpdateUserInfoResponse(object sender, Tuple<int> result)
+        {
+            Invoke(new Action(() =>
+            {
+                if (result.Item1==0)
+                {
+                    MessageBox.Show("修改成功");
+                }
+                else
+                {
+                    MessageBox.Show("修改失败");
+                }
+            }));
+        }
+        //修改资料
+        private void bModify_Click(object sender, EventArgs e)
+        {
+            if (!tPassWord.Equals(tConfirnPassword))
+            {
+                if (!"".Equals(tPassWord.Text))
+                {
+                    userInfo.Password = tPassWord.Text;
+                }
+                userInfo.NickName = tNickName.Text;
+                userInfo.Sex = tSex.Text;
+                userInfo.Age = int.Parse(tAge.Text);
+                Client.UpdateUserInfo(userInfo);
+            }
+            else
+            {
+                MessageBox.Show("两次密码输入不一致!");
+                tPassWord.Focus();
+            }
+
         }
         private void FormModify_Load(object sender, EventArgs e)
         {
@@ -43,5 +80,7 @@ namespace MyChat
         {
 
         }
+
+
     }
 }
