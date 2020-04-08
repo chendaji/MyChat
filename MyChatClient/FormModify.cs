@@ -23,8 +23,6 @@ namespace MyChat
             this.UserName = UserName;
             this.Client = Client;
             Client.GetUserInfo(UserName);
-            Client.GetUserInfoResponse += Client_GetUserInfoResponse;
-            Client.UpdateUserInfoResponse += Client_UpdateUserInfoResponse;
         }
         private void Client_GetUserInfoResponse(object sender, Tuple<int, User> result)
         {
@@ -74,7 +72,8 @@ namespace MyChat
         }
         private void FormModify_Load(object sender, EventArgs e)
         {
-
+            Client.GetUserInfoResponse += Client_GetUserInfoResponse;
+            Client.UpdateUserInfoResponse += Client_UpdateUserInfoResponse;
         }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {

@@ -34,17 +34,49 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Apache.NMS, Version=1.7.1.3894, Culture=neutral, PublicKeyToken=82756feee3957618, processorArchitecture=MSIL">
-      <HintPath>..\packages\Apache.NMS.1.7.1\lib\net40\Apache.NMS.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Apache.NMS.dll</HintPath>
     </Reference>
     <Reference Include="Apache.NMS.ActiveMQ, Version=1.7.2.4108, Culture=neutral, PublicKeyToken=82756feee3957618, processorArchitecture=MSIL">
-      <HintPath>..\packages\Apache.NMS.ActiveMQ.1.7.2\lib\net40\Apache.NMS.ActiveMQ.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Apache.NMS.ActiveMQ.dll</HintPath>
+    </Reference>
+    <Reference Include="Crc32C.NET, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Crc32C.NET.1.0.5.0\lib\net20\Crc32C.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="DnsClient, Version=1.2.0.0, Culture=neutral, PublicKeyToken=4574bb5573c51424, processorArchitecture=MSIL">
+      <HintPath>..\packages\DnsClient.1.2.0\lib\net471\DnsClient.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Bson, Version=2.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Bson.2.10.2\lib\net452\MongoDB.Bson.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Driver.Core, Version=2.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Driver.Core.2.10.2\lib\net452\MongoDB.Driver.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="MongoDB.Libmongocrypt, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MongoDB.Libmongocrypt.1.0.0\lib\net452\MongoDB.Libmongocrypt.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpCompress, Version=0.23.0.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpCompress.0.23.0\lib\net45\SharpCompress.dll</HintPath>
+    </Reference>
+    <Reference Include="Snappy.NET, Version=1.1.1.8, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Snappy.NET.1.1.1.8\lib\net45\Snappy.NET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+      <Private>True</Private>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -69,4 +101,11 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\MongoDB.Libmongocrypt.1.0.0\build\MongoDB.Libmongocrypt.targets" Condition="Exists('..\packages\MongoDB.Libmongocrypt.1.0.0\build\MongoDB.Libmongocrypt.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\MongoDB.Libmongocrypt.1.0.0\build\MongoDB.Libmongocrypt.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MongoDB.Libmongocrypt.1.0.0\build\MongoDB.Libmongocrypt.targets'))" />
+  </Target>
 </Project>
