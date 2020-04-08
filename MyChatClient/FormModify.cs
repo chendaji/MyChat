@@ -28,6 +28,8 @@ namespace MyChat
         {
             Invoke(new Action(() =>
             {
+                if (this.IsDisposed) return;
+
                 userInfo = result.Item2;
                 tUserName.Text = userInfo.UserName;
                 tNickName.Text = userInfo.NickName;
@@ -39,6 +41,8 @@ namespace MyChat
         {
             Invoke(new Action(() =>
             {
+                if (this.IsDisposed) return;
+
                 if (result.Item1==0)
                 {
                     MessageBox.Show("修改成功");
@@ -77,6 +81,15 @@ namespace MyChat
         }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
+
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
+            Client.UpdateUserInfoResponse -= Client_UpdateUserInfoResponse;
+            Client.GetUserInfoResponse -= Client_GetUserInfoResponse;
 
         }
 
