@@ -18,7 +18,6 @@ namespace MongoDBOperator
         //注册
         /**
          * code 0 成功
-         * 
          * code 1 数据库已存在
          * code -1 服务出错
          * **/
