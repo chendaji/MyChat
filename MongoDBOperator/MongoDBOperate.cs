@@ -114,7 +114,10 @@ namespace MongoDBOperator
         //更新用户信息
         public void UpdateUserInfo(User user)
         {
-            UserHelper.Insert(user, i => i.Age == user.Age);
+            //Expression<Func<User, bool>> expression = p => p.Id == user.Id;
+            //UserHelper.Insert(user, expression);
+            UserHelper.Update(user);
+
         }
     }
 }

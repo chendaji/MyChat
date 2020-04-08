@@ -8,6 +8,7 @@ namespace MongoDBOperator
 {
     public class User
     {
+        String id;
         String userName;
         String password;
         String nickName;
@@ -19,5 +20,6 @@ namespace MongoDBOperator
         public string NickName { get => nickName; set => nickName = value; }
         public int Age { get => age; set => age = value; }
         public string Sex { get => sex; set => sex = value; }
+        public string Id { get => id; set => id = value; }
     }
 }

@@ -58,6 +58,7 @@ namespace MyChat
             if (passWord.Text.Trim().Equals(confirmPassword.Text.Trim()))
             {
                 User user = new User();
+                user.Id = Guid.NewGuid().ToString();
                 user.UserName = userName.Text.Trim();
                 user.Password = passWord.Text.Trim();
                 user.Age = int.Parse(age.Text.Trim());
