@@ -106,6 +106,7 @@ namespace MyChatServer
         private int Server_AddFriendRequest(Tuple<string, string> e)
         {
             Friends friend = new Friends();
+            friend.Id = Guid.NewGuid().ToString();
             friend.UserID = e.Item1;
             friend.FriendID = e.Item2;
             int code = -1;
