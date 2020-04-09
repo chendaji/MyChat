@@ -28,6 +28,7 @@ namespace MyChat
         {
             Invoke(new Action(()=>
             {
+                if (this.IsDisposed) return;
                 switch (e)
                 {
                     case 0:
@@ -90,6 +91,11 @@ namespace MyChat
         private void register_FormClosed(object sender, FormClosedEventArgs e)
         {
             
+        }
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            Client.RegisterUserResponse -= Client_RegisterUserResponse;
         }
     }
 }

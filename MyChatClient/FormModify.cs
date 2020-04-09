@@ -92,7 +92,5 @@ namespace MyChat
             Client.GetUserInfoResponse -= Client_GetUserInfoResponse;
 
         }
-
-
     }
 }
