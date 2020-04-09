@@ -88,6 +88,7 @@
             treeNode1});
             this.TVFriends.Size = new System.Drawing.Size(320, 550);
             this.TVFriends.TabIndex = 5;
+            this.TVFriends.DoubleClick += new System.EventHandler(this.TVFriends_DoubleClick);
             // 
             // label1
             // 

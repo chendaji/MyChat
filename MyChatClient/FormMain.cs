@@ -33,9 +33,25 @@ namespace MyChat
 
             formLogin.ShowDialog();
             UserName = formLogin.UserName;
+            MyFriends = formLogin.MyFriends;
+            //显示我的好友
+            foreach (TreeNode node in TVFriends.Nodes)
+            {
+                if (MyFriends != null)
+                {
+                    foreach (var friend in MyFriends)
+                    {
+                        //将姓名子节点加到姓名父节点上去
+                        TreeNode n = new TreeNode(friend.NickName);
+                        n.Tag = friend;
+                        node.Nodes.Add(n);
+                    }
+                }
+
+            }
             userName.Text = UserName;
-            Client.GetMyFriends(UserName);
-            Client.GetMyFriendsResponse += Client_GetMyFriendsResponse;
+            //  Client.GetMyFriends(UserName);
+            //   Client.GetMyFriendsResponse += Client_GetMyFriendsResponse;
         }
 
         private void Meun_Load(object sender, EventArgs e)
@@ -61,9 +77,10 @@ namespace MyChat
                 {
                     foreach (var friend in MyFriends)
                     {
-
                         //将姓名子节点加到姓名父节点上去
-                        node.Nodes.Add(new TreeNode(friend.NickName));
+                        TreeNode n = new TreeNode(friend.NickName);
+                        n.Tag = friend;
+                        node.Nodes.Add(n);
                     }
                 }
 
@@ -87,6 +104,14 @@ namespace MyChat
             FormSearch formSearch = new FormSearch(Client, UserName);
 
             formSearch.ShowDialog();
+        }
+
+        private void TVFriends_DoubleClick(object sender, EventArgs e)
+        {
+            TreeNode node = TVFriends.SelectedNode;
+            User userInfo = (User)node.Tag;
+            FormChat formChat = new FormChat(UserName, userInfo.UserName, node.Text);
+            formChat.Show();
         }
     }
 }

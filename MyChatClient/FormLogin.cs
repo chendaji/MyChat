@@ -12,6 +12,9 @@ namespace MyChat
 
         public string userName;
 
+        public List<User> MyFriends;
+
+
         public string Username => tBUsername.Text;
         public string Password => tBPassword.Text;
 
@@ -29,7 +32,7 @@ namespace MyChat
             Invoke(new Action(() =>
             {
                 //我所有的好友
-                List<User> MyFriends = result.Item2;
+                this.MyFriends = result.Item2;
                 switch (result.Item1)
                 {
                     case 0:
