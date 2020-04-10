@@ -22,6 +22,7 @@ namespace ActiveMQOperator
             activeMQ.Received += ActiveMQ_Received;
         }
 
+
         public event EventHandler<int> RegisterUserResponse;
         public event EventHandler<Tuple<int, List<User>>> UserLoginResponse;
         public event EventHandler<List<User>> FriendsSearchedResponse;
@@ -142,7 +143,18 @@ namespace ActiveMQOperator
                     break;
                 case "Chat":
                     {
+                        {
+                            if (Sessions.ContainsKey(package.SessionID))
+                            {
+                                var data = JsonConvert.DeserializeAnonymousType(package.Data, new
+                                {
+                                    Result = default(Tuple<int>)
 
+                                });
+
+                                UpdateUserInfoResponse?.Invoke(this, data.Result);
+                            }
+                        }
                     }
                     break;
                 default:
@@ -253,7 +265,12 @@ namespace ActiveMQOperator
 
         public void Chat(string Address, string Message)
         {
-
+            Package package = new Package(
+               Guid.NewGuid(),
+               "Chat",
+               Address,
+              Message);
+            activeMQ.Send("MyChat", package.ToString());
         }
     }
 }

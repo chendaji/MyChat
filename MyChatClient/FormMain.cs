@@ -110,7 +110,7 @@ namespace MyChat
         {
             TreeNode node = TVFriends.SelectedNode;
             User userInfo = (User)node.Tag;
-            FormChat formChat = new FormChat(UserName, userInfo.UserName, node.Text);
+            FormChat formChat = new FormChat(UserName, userInfo.UserName, node.Text, Client);
             formChat.Show();
         }
     }
