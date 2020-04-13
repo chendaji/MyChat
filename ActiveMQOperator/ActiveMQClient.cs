@@ -30,6 +30,8 @@ namespace ActiveMQOperator
         public event EventHandler<Tuple<int, List<User>>> GetMyFriendsResponse;
         public event EventHandler<Tuple<int, User>> GetUserInfoResponse;
         public event EventHandler<Tuple<int>> UpdateUserInfoResponse;
+        public event EventHandler<int> LogoutResponse;
+        
 
         public event EventHandler<Tuple<string, string, string>> FriendAddedNotice;
 
@@ -135,6 +137,20 @@ namespace ActiveMQOperator
                                         });
 
                                         UpdateUserInfoResponse?.Invoke(this, data.Result);
+                                    }
+                                }
+                                break;
+                            case nameof(Logout):
+                                {
+                                    if (Sessions.ContainsKey(package.SessionID))
+                                    {
+                                        var data = JsonConvert.DeserializeAnonymousType(package.Data, new
+                                        {
+                                            Result = default(int)
+
+                                        });
+
+                                        LogoutResponse?.Invoke(this, data.Result);
                                     }
                                 }
                                 break;
@@ -304,6 +320,19 @@ namespace ActiveMQOperator
                   Message
               }));
             activeMQ.Send(Address, package.ToString());
+        }
+
+        public void Logout(string UserName)
+        {
+            var id = Guid.NewGuid();
+            var package = new Package(id, "Request", nameof(Logout), JsonConvert.SerializeObject(new
+            {
+                Address,
+                UserName
+            }));
+            Sessions[id] = package;
+
+            activeMQ.Send("MyChat", package.ToString());
         }
     }
 }

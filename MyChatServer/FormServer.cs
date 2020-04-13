@@ -36,6 +36,7 @@ namespace MyChatServer
             Server.GetMyFriendsRequest += Server_GetMyFriendsRequest;
             Server.GetUserInfoRequest += Server_GetUserInfoRequest;
             Server.UpdateUserInfoRequest += Server_UpdateUserInfoRequest;
+            Server.LogoutRequest += Server_LogoutRequest;
         }
 
         //发起等登陆请求
@@ -149,6 +150,23 @@ namespace MyChatServer
                 code = 0;
             }));
             return new Tuple<int>(code);
+        }
+        //退出登录，删掉lVOnlineUsers上的用户
+        private int Server_LogoutRequest(string userName)
+        {
+            int code = -1;
+            Invoke(new Action(() =>
+            {
+                for (int i = 0; i < lVOnlineUsers.Items.Count; i++)
+                {
+                    if (lVOnlineUsers.Items[i].Text.Equals(userName))
+                    {
+                        lVOnlineUsers.Items.Remove(lVOnlineUsers.Items[i]);
+                    }
+                }
+                code = 0;
+            }));
+            return code;
         }
 
     }

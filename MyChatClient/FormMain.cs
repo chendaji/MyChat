@@ -113,6 +113,7 @@ namespace MyChat
         {
             FormSearch formSearch = new FormSearch(Client, UserName);
             formSearch.ShowDialog();
+
         }
 
         private void TVFriends_DoubleClick(object sender, EventArgs e)
@@ -121,6 +122,13 @@ namespace MyChat
             User userInfo = (User)node.Tag;
             FormChat formChat = new FormChat(UserName, userInfo.UserName, node.Text, Client);
             formChat.Show();
+        }
+
+        private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            //退出登录
+            Client.Logout(UserName);
+            Application.Exit();
         }
     }
 }

@@ -122,6 +122,7 @@
             this.Controls.Add(this.userName);
             this.Name = "FormMain";
             this.Text = "主界面";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             this.Load += new System.EventHandler(this.Meun_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
