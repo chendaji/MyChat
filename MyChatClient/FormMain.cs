@@ -22,7 +22,22 @@ namespace MyChat
         {
             InitializeComponent();
             System.Windows.Forms.Control.CheckForIllegalCrossThreadCalls = false;//设置该属性 为false
+
+            Client.ChatReceived += Client_ChatReceived;
         }
+        Dictionary<string, FormChat> Chats = new Dictionary<string, FormChat>();
+        private void Client_ChatReceived(object sender, Tuple<string, string> e)
+        {
+            if (!Chats.ContainsKey(e.Item1))
+            {
+                // TODO:Get Nickname and Address by e.Item1(Friend Username)
+                Chats = new FormChat(UserName, e.Item1, NickName, Address, Client);
+            }
+            Chats[e.Item1].Show();
+            Chats[e.Item1].BringToFront();
+            Chats[e.Item1].Chat(e.Item2);
+        }
+
         FormLogin formLogin;
         protected override void OnLoad(EventArgs e)
         {
@@ -83,12 +98,7 @@ namespace MyChat
                         node.Nodes.Add(n);
                     }
                 }
-
-
-
             }));
-
-
         }
         private void modifyData_Click(object sender, EventArgs e)
         {
@@ -102,7 +112,6 @@ namespace MyChat
         private void addFriends_Click(object sender, EventArgs e)
         {
             FormSearch formSearch = new FormSearch(Client, UserName);
-
             formSearch.ShowDialog();
         }
 

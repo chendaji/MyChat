@@ -102,7 +102,7 @@ namespace MyChatServer
             return new Tuple<int, List<User>>(code, allUsers);
         }
 
-        //添加好友，添加本人ID和需要添加的好友ID
+        //添加好友，需要添加本人ID和需要添加的好友ID
         private int Server_AddFriendRequest(Tuple<string, string> e)
         {
             Friends friend = new Friends();

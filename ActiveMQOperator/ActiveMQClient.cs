@@ -31,6 +31,8 @@ namespace ActiveMQOperator
         public event EventHandler<Tuple<int, User>> GetUserInfoResponse;
         public event EventHandler<Tuple<int>> UpdateUserInfoResponse;
 
+        public event EventHandler<Tuple<string, string, string>> FriendAddedNotice;
+
         //接收信息
         private void ActiveMQ_Received(object sender, string e)
         {
@@ -141,20 +143,45 @@ namespace ActiveMQOperator
                         }
                     }
                     break;
+                case "Notice":
+                    {
+                        switch (package.Method)
+                        {
+                            case "FriendAdded":
+                                {
+
+                                    var data = JsonConvert.DeserializeAnonymousType(package.Data, new
+                                    {
+                                        Address = default(string),
+                                        FriendUsername = default(string),
+                                        FriendNickname = default(string),
+                                        FriendAddress = default(string)
+                                    });
+
+                                    FriendAddedNotice?.Invoke(this, new Tuple<string, string, string>(data.FriendUsername, data.FriendNickname, data.FriendAddress);
+                                }
+                                break;
+                        }
+                    }
+                    break;
                 case "Chat":
                     {
+                        switch (package.Method)
                         {
-                            if (Sessions.ContainsKey(package.SessionID))
-                            {
+                            case "Text":
                                 var data = JsonConvert.DeserializeAnonymousType(package.Data, new
                                 {
-                                    Result = default(Tuple<int>)
-
+                                    Username = default(string),
+                                    Message = default(string)
                                 });
 
-                                UpdateUserInfoResponse?.Invoke(this, data.Result);
-                            }
+                                ChatReceived?.Invoke(this, new  Tuple<string, string>(data.Username, data.Message));
+                                break;
+                            default:
+                                break;
                         }
+                        
+
                     }
                     break;
                 default:
@@ -263,14 +290,20 @@ namespace ActiveMQOperator
             activeMQ.Send("MyChat", package.ToString());
         }
 
-        public void Chat(string Address, string Message)
+        public event EventHandler<Tuple<string, string>> ChatReceived;
+
+        public void Chat(string Address, string Username, string Message)
         {
             Package package = new Package(
                Guid.NewGuid(),
                "Chat",
-               Address,
-              Message);
-            activeMQ.Send("MyChat", package.ToString());
+               "Text",
+              JsonConvert.ToString(new
+              {
+                  Username,
+                  Message
+              }));
+            activeMQ.Send(Address, package.ToString());
         }
     }
 }

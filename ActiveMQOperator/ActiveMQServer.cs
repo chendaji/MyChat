@@ -123,6 +123,9 @@ namespace ActiveMQOperator
                                     {
                                         Result
                                     })).ToString());
+
+                                    // TODO:通知被加好友方
+                                   //FriendAdded()
                                 }
                                 break;
                             case "GetMyFriends":
@@ -190,14 +193,27 @@ namespace ActiveMQOperator
                         }
                     }
                     break;
-                case "Chat":
 
-                    break;
                 default:
                     break;
             }
         }
 
+        public void FriendAdded(string Address, string FriendUsername, string FriendNickname, string FriendAddress)
+        {
+            var id = Guid.NewGuid();
 
+            var package = new Package(id, "Notice", nameof(FriendAdded), JsonConvert.SerializeObject(new
+            {
+                Address,
+                FriendUsername,
+                FriendNickname,
+                FriendAddress,
+            }));
+
+            //Sessions[id] = package;
+
+            activeMQ.Send("MyChat", package.ToString());
+        }
     }
 }

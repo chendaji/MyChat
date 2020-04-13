@@ -19,50 +19,66 @@ namespace MyChat
         string CurrentUser;
         //选择聊天的用户
         string ToUserName;
-        static ActiveMQOperate activeMQ = new ActiveMQOperate();
-
+        string NickName;
+        //static ActiveMQOperate activeMQ = new ActiveMQOperate();
+        ActiveMQClient Client;
         Guid guid = Guid.NewGuid();
-        public FormChat(string CurrentUser, string ToUserName, string NickName, ActiveMQClient Client)
+        string Address;
+        public FormChat(string CurrentUser, string ToUserName, string NickName, string Address, ActiveMQClient Client)
         {
             this.CurrentUser = CurrentUser;
             this.ToUserName = ToUserName;
+            this.NickName = NickName;
             InitializeComponent();
             this.Text = "正在和" + NickName + "聊天";
-            activeMQ.Connect("MyChat");
-            activeMQ.Received += ActiveMQ_Received;
+            //activeMQ.Connect("MyChat");
+            //activeMQ.Received += ActiveMQ_Received;
+            this.Address = Address;
+            this.Client = Client;
         }
 
         private void BSend_Click(object sender, EventArgs e)
         {
 
-            string text = string.Format("{0} 说:{1}", CurrentUser, tMessage.Text);
-            this.rtAllMsg.AppendText(string.Format("\r\n{0}", text));
+            //string text = string.Format("{0} 说:{1}", CurrentUser, tMessage.Text);
+            this.rtAllMsg.AppendText(string.Format("\r\n{0}", tMessage.Text));
             this.rtAllMsg.SelectionAlignment = HorizontalAlignment.Right;
 
-            Package package = new Package(
-             guid,
-            "Request",
-            "Connect",
-           text);
+            // Package package = new Package(
+            //  guid,
+            // "Request",
+            // "Connect",
+            //text);
 
-            activeMQ.Send("MyChat", package.ToString());
+            Client.Chat(Address, CurrentUser, tMessage.Text);
         }
-        private void ActiveMQ_Received(object sender, string e)
+        //private void ActiveMQ_Received(object sender, string e)
+        //{
+        //    Package package = JsonConvert.DeserializeObject<Package>(e);
+        //    guid = package.SessionID;
+        //    Invoke(new Action(() =>
+        //    {
+        //        this.rtAllMsg.AppendText(string.Format("\r\n{0}", package.Data));
+        //        this.rtAllMsg.SelectionAlignment = HorizontalAlignment.Left;
+
+        //    }));
+        //}
+
+        public void Chat(string Message)
         {
-            Package package = JsonConvert.DeserializeObject<Package>(e);
-            guid = package.SessionID;
             Invoke(new Action(() =>
             {
-                this.rtAllMsg.AppendText(string.Format("\r\n{0}", package.Data));
+                this.rtAllMsg.AppendText($"\r\n{NickName}({DateTime.Now}):\r\n{Message}");
                 this.rtAllMsg.SelectionAlignment = HorizontalAlignment.Left;
-
             }));
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
-            activeMQ.Received -= ActiveMQ_Received;
+            //activeMQ.Received -= ActiveMQ_Received;
+            e.Cancel = true;
+            Hide();
         }
     }
 }
