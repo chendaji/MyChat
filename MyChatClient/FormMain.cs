@@ -24,14 +24,16 @@ namespace MyChat
             System.Windows.Forms.Control.CheckForIllegalCrossThreadCalls = false;//设置该属性 为false
 
             Client.ChatReceived += Client_ChatReceived;
+            Client.FriendAddedNotice += Client_FriendAddedNotice;
         }
         Dictionary<string, FormChat> Chats = new Dictionary<string, FormChat>();
         private void Client_ChatReceived(object sender, Tuple<string, string> e)
         {
             if (!Chats.ContainsKey(e.Item1))
             {
+                // 当前用户,聊天好友，好友NickName，好友Address
                 // TODO:Get Nickname and Address by e.Item1(Friend Username)
-                Chats = new FormChat(UserName, e.Item1, NickName, Address, Client);
+                Chats[e.Item1] = new FormChat(UserName, e.Item1, "", "", Client);
             }
             Chats[e.Item1].Show();
             Chats[e.Item1].BringToFront();
@@ -119,8 +121,9 @@ namespace MyChat
         private void TVFriends_DoubleClick(object sender, EventArgs e)
         {
             TreeNode node = TVFriends.SelectedNode;
+            //好友信息
             User userInfo = (User)node.Tag;
-            FormChat formChat = new FormChat(UserName, userInfo.UserName, node.Text, Client);
+            FormChat formChat = new FormChat(UserName, userInfo.UserName, node.Text, userInfo.Address, Client);
             formChat.Show();
         }
 
@@ -129,6 +132,26 @@ namespace MyChat
             //退出登录
             Client.Logout(UserName);
             Application.Exit();
+        }
+        //添加好友返回通知
+        private void Client_FriendAddedNotice(object sender, Tuple<string, string, string> e)
+        {
+            MessageBox.Show("add sucess");
+            //data.FriendUsername, data.FriendNickname, data.FriendAddress
+            User user = new User();
+            user.UserName = e.Item1;
+            user.NickName = e.Item2;
+            user.Address = e.Item3;
+            Invoke(new Action(() =>
+            {
+                foreach (TreeNode node in TVFriends.Nodes)
+                {
+                        //将姓名子节点加到姓名父节点上去
+                        TreeNode n = new TreeNode(e.Item2);
+                        n.Tag = user;
+                        node.Nodes.Add(n);
+                }
+            }));
         }
     }
 }

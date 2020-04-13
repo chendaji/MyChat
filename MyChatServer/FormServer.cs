@@ -55,16 +55,19 @@ namespace MyChatServer
                     User userInfo = mongoDBOperate.GetUserInfo(arg.Item1);
                     // 查询该用户所有好友
                     List<User> users = mongoDBOperate.GetMyFriends(arg.Item1);
-                    friends.AddRange(users);
-                    // 获取在线好友
-                    /*
-                    friends.Add(JsonConvert.SerializeObject(new
+                    // 遍历所有好友，将在线好友地址添加进去
+                    for (int i =0;i<users.Count;i++)
                     {
-                        Username = "",
-                        Nickname = "",
-                        Address = "",//不在线时为空
-                    }));
-                    */
+                        for(int j = 0; j < lVOnlineUsers.Items.Count; j++)
+                        {
+                            if (users[i].UserName.Equals(lVOnlineUsers.Items[j].Text))
+                            {
+                                //将在线好友地址添加进去
+                                users[i].Address = lVOnlineUsers.Items[j].SubItems[2].Text;
+                            }
+                        }
+                    }
+                    friends.AddRange(users);
 
                     // 将在线用户加入在线列表。
                     lBUsername.Items.Add(arg.Item1);

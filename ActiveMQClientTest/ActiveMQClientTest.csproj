@@ -57,7 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ActiveMQOperator\ActiveMQOperator.csproj">
-      <Project>{E3B5E592-039F-46F3-B1C9-763B1D8EFBAC}</Project>
+      <Project>{e3b5e592-039f-46f3-b1c9-763b1d8efbac}</Project>
       <Name>ActiveMQOperator</Name>
     </ProjectReference>
   </ItemGroup>

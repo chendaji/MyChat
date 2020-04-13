@@ -14,6 +14,8 @@ namespace MongoDBOperator
         String nickName;
         int age;
         String sex;
+        // 在线地址
+        string address;
 
         public string UserName { get => userName; set => userName = value; }
         public string Password { get => password; set => password = value; }
@@ -21,5 +23,6 @@ namespace MongoDBOperator
         public int Age { get => age; set => age = value; }
         public string Sex { get => sex; set => sex = value; }
         public string Id { get => id; set => id = value; }
+        public string Address { get => address; set => address = value; }
     }
 }

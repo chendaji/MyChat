@@ -121,7 +121,7 @@ namespace ActiveMQOperator
                                     var Result = AddFriendRequest?.Invoke(new Tuple<string, string>(data.MyUserID, data.FriendID));
 
                                     // TODO:响应客户端。
-                                    activeMQ.Send(data.Address, new Package(package.SessionID, "Response", package.Method, JsonConvert.SerializeObject(new
+                                    activeMQ.Send(data.Address, new Package(package.SessionID, "Notice", package.Method, JsonConvert.SerializeObject(new
                                     {
                                         Result
                                     })).ToString());

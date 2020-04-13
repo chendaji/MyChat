@@ -24,6 +24,7 @@ namespace MyChat
         ActiveMQClient Client;
         Guid guid = Guid.NewGuid();
         string Address;
+        // 当前用户，好友NickName，好友Address
         public FormChat(string CurrentUser, string ToUserName, string NickName, string Address, ActiveMQClient Client)
         {
             this.CurrentUser = CurrentUser;
@@ -79,6 +80,11 @@ namespace MyChat
             //activeMQ.Received -= ActiveMQ_Received;
             e.Cancel = true;
             Hide();
+        }
+
+        public static implicit operator Dictionary<object, object>(FormChat v)
+        {
+            throw new NotImplementedException();
         }
     }
 }

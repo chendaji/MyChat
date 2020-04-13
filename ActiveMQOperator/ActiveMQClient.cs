@@ -163,7 +163,7 @@ namespace ActiveMQOperator
                     {
                         switch (package.Method)
                         {
-                            case "FriendAdded":
+                            case "AddFriend":
                                 {
 
                                     var data = JsonConvert.DeserializeAnonymousType(package.Data, new
@@ -174,7 +174,7 @@ namespace ActiveMQOperator
                                         FriendAddress = default(string)
                                     });
 
-                                    FriendAddedNotice?.Invoke(this, new Tuple<string, string, string>(data.FriendUsername, data.FriendNickname, data.FriendAddress);
+                                    FriendAddedNotice?.Invoke(this, new Tuple<string, string, string>(data.FriendUsername, data.FriendNickname, data.FriendAddress));
                                 }
                                 break;
                         }
@@ -314,7 +314,7 @@ namespace ActiveMQOperator
                Guid.NewGuid(),
                "Chat",
                "Text",
-              JsonConvert.ToString(new
+              JsonConvert.SerializeObject(new
               {
                   Username,
                   Message
