@@ -25,6 +25,7 @@ namespace MyChat
 
             Client.ChatReceived += Client_ChatReceived;
             Client.FriendAddedNotice += Client_FriendAddedNotice;
+            Client.AddFriendResponse += Client_AddFriendResponse;
         }
         Dictionary<string, FormChat> Chats = new Dictionary<string, FormChat>();
         private void Client_ChatReceived(object sender, Tuple<string, string> e)
@@ -32,8 +33,19 @@ namespace MyChat
             if (!Chats.ContainsKey(e.Item1))
             {
                 // 当前用户,聊天好友，好友NickName，好友Address
-                // TODO:Get Nickname and Address by e.Item1(Friend Username)
-                Chats[e.Item1] = new FormChat(UserName, e.Item1, "", "", Client);
+                // Get Nickname and Address by e.Item1(Friend Username)
+                string FirnedUserName = e.Item1;
+                string FriendNickName = "";
+                string FriendAddress = "";
+                foreach (User friendInfo in MyFriends)
+                {
+                    if (FirnedUserName.Equals(friendInfo.UserName))
+                    {
+                        FriendNickName = friendInfo.NickName;
+                        FriendAddress = friendInfo.Address;
+                    }
+                }
+                Chats[e.Item1] = new FormChat(UserName, FirnedUserName, FriendNickName, FriendAddress, Client);
             }
             Chats[e.Item1].Show();
             Chats[e.Item1].BringToFront();
@@ -114,7 +126,7 @@ namespace MyChat
         private void addFriends_Click(object sender, EventArgs e)
         {
             FormSearch formSearch = new FormSearch(Client, UserName);
-            formSearch.ShowDialog();
+            formSearch.Show();
 
         }
 
@@ -133,25 +145,50 @@ namespace MyChat
             Client.Logout(UserName);
             Application.Exit();
         }
-        //添加好友返回通知
-        private void Client_FriendAddedNotice(object sender, Tuple<string, string, string> e)
+        //主动添加好友通知
+        //返回自己和朋友信息 code eurrentUser friendInfo
+        private void Client_AddFriendResponse(object sender, Tuple<int, User, User> e)
         {
-            MessageBox.Show("add sucess");
+            Invoke(new Action(() =>
+            {
+                if (e.Item1 == 0)
+                {
+                    User firnedInfo = e.Item3;
+                    foreach (TreeNode node in TVFriends.Nodes)
+                    {
+                        //将姓名子节点加到姓名父节点上去
+                        TreeNode n = new TreeNode(firnedInfo.NickName);
+                        n.Tag = firnedInfo;
+                        node.Nodes.Add(n);
+                    }
+                    MessageBox.Show("添加好友成功");
+
+                }
+                else
+                {
+                    MessageBox.Show("添加好友失败");
+                }
+            }));
+
+        }
+        //被添加好友通知
+        private void Client_FriendAddedNotice(object sender, Tuple<int, User, User> e)
+        {
             //data.FriendUsername, data.FriendNickname, data.FriendAddress
-            User user = new User();
-            user.UserName = e.Item1;
-            user.NickName = e.Item2;
-            user.Address = e.Item3;
+            int code = e.Item1;
+            User user = e.Item2;
+
             Invoke(new Action(() =>
             {
                 foreach (TreeNode node in TVFriends.Nodes)
                 {
-                        //将姓名子节点加到姓名父节点上去
-                        TreeNode n = new TreeNode(e.Item2);
-                        n.Tag = user;
-                        node.Nodes.Add(n);
+                    //将姓名子节点加到姓名父节点上去
+                    TreeNode n = new TreeNode(user.NickName);
+                    n.Tag = user;
+                    node.Nodes.Add(n);
                 }
             }));
+            MessageBox.Show("用户"+user.NickName+"您添加为好友" );
         }
     }
 }

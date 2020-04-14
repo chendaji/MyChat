@@ -24,7 +24,7 @@ namespace MyChat
             this.UserName = UserName;
 
             Client.FriendsSearchedResponse += Client_FriendsSearchedResponse;
-            Client.AddFriendResponse += Client_AddFriendResponse;
+           // Client.AddFriendResponse += Client_AddFriendResponse;
         }
 
         private void Client_FriendsSearchedResponse(object sender, List<User> friends)
@@ -43,16 +43,21 @@ namespace MyChat
 
             }
         }
-        private void Client_AddFriendResponse(object sender, int code)
+        private void Client_AddFriendResponse(object sender, Tuple<int, User> e)
         {
-            if (code == 0)
+            Invoke(new Action(() =>
             {
-                MessageBox.Show("添加好友成功");
-            }
-            else
-            {
-                MessageBox.Show("添加好友失败");
-            }
+                if (e.Item1 == 0)
+                {
+                    MessageBox.Show("添加好友成功");
+
+                }
+                else
+                {
+                    MessageBox.Show("添加好友失败");
+                }
+            }));
+
         }
 
         private void bSearchFriend_Click(object sender, EventArgs e)

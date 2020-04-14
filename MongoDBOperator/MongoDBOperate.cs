@@ -101,9 +101,11 @@ namespace MongoDBOperator
         }
         MongoDBHelper<Friends> FriendsHelper = new MongoDBHelper<Friends>("friends");
 
-        public void AddFriend(Friends friends)
+        public User AddFriend(Friends friends)
         {
             FriendsHelper.Insert(friends);
+            User userInfo = UserHelper.SelectOne(new Document("UserName", friends.FriendID));
+            return userInfo;
         }
         //获取用户信息
         public User GetUserInfo(string UserName)

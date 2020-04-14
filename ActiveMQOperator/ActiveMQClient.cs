@@ -26,14 +26,14 @@ namespace ActiveMQOperator
         public event EventHandler<int> RegisterUserResponse;
         public event EventHandler<Tuple<int, List<User>>> UserLoginResponse;
         public event EventHandler<List<User>> FriendsSearchedResponse;
-        public event EventHandler<int> AddFriendResponse;
+        public event EventHandler<Tuple<int, User, User>> AddFriendResponse;
         public event EventHandler<Tuple<int, List<User>>> GetMyFriendsResponse;
         public event EventHandler<Tuple<int, User>> GetUserInfoResponse;
         public event EventHandler<Tuple<int>> UpdateUserInfoResponse;
         public event EventHandler<int> LogoutResponse;
-        
 
-        public event EventHandler<Tuple<string, string, string>> FriendAddedNotice;
+
+        public event EventHandler<Tuple<int, User, User>> FriendAddedNotice;
 
         //接收信息
         private void ActiveMQ_Received(object sender, string e)
@@ -91,7 +91,7 @@ namespace ActiveMQOperator
                                     {
                                         var data = JsonConvert.DeserializeAnonymousType(package.Data, new
                                         {
-                                            Result = default(int)
+                                            Result = default(Tuple<int, User, User>)
                                         });
 
                                         AddFriendResponse?.Invoke(this, data.Result);
@@ -168,13 +168,10 @@ namespace ActiveMQOperator
 
                                     var data = JsonConvert.DeserializeAnonymousType(package.Data, new
                                     {
-                                        Address = default(string),
-                                        FriendUsername = default(string),
-                                        FriendNickname = default(string),
-                                        FriendAddress = default(string)
+                                        Result = default(Tuple<int, User, User>)
                                     });
 
-                                    FriendAddedNotice?.Invoke(this, new Tuple<string, string, string>(data.FriendUsername, data.FriendNickname, data.FriendAddress));
+                                    FriendAddedNotice?.Invoke(this, data.Result);
                                 }
                                 break;
                         }
@@ -191,12 +188,12 @@ namespace ActiveMQOperator
                                     Message = default(string)
                                 });
 
-                                ChatReceived?.Invoke(this, new  Tuple<string, string>(data.Username, data.Message));
+                                ChatReceived?.Invoke(this, new Tuple<string, string>(data.Username, data.Message));
                                 break;
                             default:
                                 break;
                         }
-                        
+
 
                     }
                     break;

@@ -56,9 +56,9 @@ namespace MyChatServer
                     // 查询该用户所有好友
                     List<User> users = mongoDBOperate.GetMyFriends(arg.Item1);
                     // 遍历所有好友，将在线好友地址添加进去
-                    for (int i =0;i<users.Count;i++)
+                    for (int i = 0; i < users.Count; i++)
                     {
-                        for(int j = 0; j < lVOnlineUsers.Items.Count; j++)
+                        for (int j = 0; j < lVOnlineUsers.Items.Count; j++)
                         {
                             if (users[i].UserName.Equals(lVOnlineUsers.Items[j].Text))
                             {
@@ -107,8 +107,11 @@ namespace MyChatServer
         }
 
         //添加好友，需要添加本人ID和需要添加的好友ID
-        private int Server_AddFriendRequest(Tuple<string, string> e)
+        //返回自己和朋友信息 code eurrentUser friend
+        private Tuple<int, User, User> Server_AddFriendRequest(Tuple<string, string> e)
         {
+            User MyInfo = new User();
+            User FiendInfo = new User();
             Friends friend = new Friends();
             friend.Id = Guid.NewGuid().ToString();
             friend.UserID = e.Item1;
@@ -116,10 +119,25 @@ namespace MyChatServer
             int code = -1;
             Invoke(new Action(() =>
             {
-                mongoDBOperate.AddFriend(friend);
+                FiendInfo = mongoDBOperate.AddFriend(friend);
+                MyInfo = mongoDBOperate.GetUserInfo(friend.UserID);
                 code = 0;
+                for (int i = 0; i < lVOnlineUsers.Items.Count; i++)
+                {
+
+                    if (friend.FriendID.Equals(lVOnlineUsers.Items[i].Text))
+                    {
+                        //将在线好友地址添加进去
+                        FiendInfo.Address = lVOnlineUsers.Items[i].SubItems[2].Text;
+                    }
+                    else if (friend.UserID.Equals(lVOnlineUsers.Items[i].Text))
+                    {
+                        //将自己地址添加进去
+                        MyInfo.Address = lVOnlineUsers.Items[i].SubItems[2].Text;
+                    }
+                }
             }));
-            return code;
+            return new Tuple<int, User, User>(code, MyInfo, FiendInfo);
         }
         private Tuple<int, List<User>> Server_GetMyFriendsRequest(Tuple<string> e)
         {

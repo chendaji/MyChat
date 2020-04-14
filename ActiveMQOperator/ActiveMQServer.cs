@@ -22,8 +22,8 @@ namespace ActiveMQOperator
         public event Func<Tuple<string, string, string>, Tuple<int, List<User>>> UserLoginRequest;
 
         public event Func<Tuple<string, string>, Tuple<int, List<User>>> SearchFriendsRequest;
-
-        public event Func<Tuple<string, string>, int> AddFriendRequest;
+        //返回自己和朋友信息 code eurrentUser friend
+        public event Func<Tuple<string, string>, Tuple<int, User,User>> AddFriendRequest;
 
         public event Func<Tuple<string>, Tuple<int, List<User>>> GetMyFriendsRequest;
 
@@ -120,14 +120,17 @@ namespace ActiveMQOperator
                                     // TODO:数据库处理。
                                     var Result = AddFriendRequest?.Invoke(new Tuple<string, string>(data.MyUserID, data.FriendID));
 
-                                    // TODO:响应客户端。
-                                    activeMQ.Send(data.Address, new Package(package.SessionID, "Notice", package.Method, JsonConvert.SerializeObject(new
+                                    // 响应客户端,在主界面绑定好友信息。
+                                    activeMQ.Send(data.Address, new Package(package.SessionID, "Response", package.Method, JsonConvert.SerializeObject(new
                                     {
                                         Result
                                     })).ToString());
 
-                                    // TODO:通知被加好友方
-                                   //FriendAdded()
+                                    // 通知被加好友方
+                                    activeMQ.Send(Result.Item3.Address, new Package(package.SessionID, "Notice", package.Method, JsonConvert.SerializeObject(new
+                                    {
+                                        Result
+                                    })).ToString());
                                 }
                                 break;
                             case "GetMyFriends":
