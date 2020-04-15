@@ -30,26 +30,29 @@ namespace MyChat
         Dictionary<string, FormChat> Chats = new Dictionary<string, FormChat>();
         private void Client_ChatReceived(object sender, Tuple<string, string> e)
         {
-            if (!Chats.ContainsKey(e.Item1))
+            Invoke(new Action(() =>
             {
-                // 当前用户,聊天好友，好友NickName，好友Address
-                // Get Nickname and Address by e.Item1(Friend Username)
-                string FirnedUserName = e.Item1;
-                string FriendNickName = "";
-                string FriendAddress = "";
-                foreach (User friendInfo in MyFriends)
+                if (!Chats.ContainsKey(e.Item1))
                 {
-                    if (FirnedUserName.Equals(friendInfo.UserName))
+                    // 当前用户,聊天好友，好友NickName，好友Address
+                    // Get Nickname and Address by e.Item1(Friend Username)
+                    string FirnedUserName = e.Item1;
+                    string FriendNickName = "";
+                    string FriendAddress = "";
+                    foreach (User friendInfo in MyFriends)
                     {
-                        FriendNickName = friendInfo.NickName;
-                        FriendAddress = friendInfo.Address;
+                        if (FirnedUserName.Equals(friendInfo.UserName))
+                        {
+                            FriendNickName = friendInfo.NickName;
+                            FriendAddress = friendInfo.Address;
+                        }
                     }
+                    Chats[e.Item1] = new FormChat(UserName, FirnedUserName, FriendNickName, FriendAddress, Client);
                 }
-                Chats[e.Item1] = new FormChat(UserName, FirnedUserName, FriendNickName, FriendAddress, Client);
-            }
-            Chats[e.Item1].Show();
-            Chats[e.Item1].BringToFront();
-            Chats[e.Item1].Chat(e.Item2);
+                Chats[e.Item1].Show();
+                Chats[e.Item1].BringToFront();
+                Chats[e.Item1].Chat(e.Item2);
+            }));
         }
 
         FormLogin formLogin;
@@ -133,10 +136,15 @@ namespace MyChat
         private void TVFriends_DoubleClick(object sender, EventArgs e)
         {
             TreeNode node = TVFriends.SelectedNode;
+            if (node == null) { MessageBox.Show("Node is null"); return; }
             //好友信息
             User userInfo = (User)node.Tag;
-            FormChat formChat = new FormChat(UserName, userInfo.UserName, node.Text, userInfo.Address, Client);
-            formChat.Show();
+            if (!Chats.ContainsKey(userInfo.UserName))
+            {
+                Chats[userInfo.UserName] = new FormChat(UserName, userInfo.UserName, node.Text, userInfo.Address, Client);
+            }
+            Chats[userInfo.UserName].Show();
+            Chats[userInfo.UserName].BringToFront();
         }
 
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
@@ -188,7 +196,7 @@ namespace MyChat
                     node.Nodes.Add(n);
                 }
             }));
-            MessageBox.Show("用户"+user.NickName+"您添加为好友" );
+            MessageBox.Show("用户" + user.NickName + "您添加为好友");
         }
     }
 }
