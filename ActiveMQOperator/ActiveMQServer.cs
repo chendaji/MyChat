@@ -82,7 +82,7 @@ namespace ActiveMQOperator
                                     activeMQ.Send(data.Address, new Package(package.SessionID, "Response", package.Method, JsonConvert.SerializeObject(new
                                     {
                                         Result,
-                                        Friends = 
+                                        //Friends = 
                                     })).ToString());
                                 }
 
@@ -208,10 +208,10 @@ namespace ActiveMQOperator
                                     var Result = LogoutRequest?.Invoke(data.UserName);
 
                                     // TODO:响应客户端。
-                                    //activeMQ.Send(data.Address, new Package(package.SessionID, "Response", package.Method, JsonConvert.SerializeObject(new
-                                    //{
-                                    //    Result
-                                    //})).ToString());
+                                    activeMQ.Send(data.Address, new Package(package.SessionID, "Response", package.Method, JsonConvert.SerializeObject(new
+                                    {
+                                        Result
+                                    })).ToString());
                                 }
                                 break;
                             default:
