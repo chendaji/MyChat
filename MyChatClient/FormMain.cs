@@ -169,7 +169,6 @@ namespace MyChat
                         n.Tag = firnedInfo;
                         node.Nodes.Add(n);
                     }
-                    MessageBox.Show("添加好友成功");
 
                 }
                 else

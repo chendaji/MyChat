@@ -81,8 +81,7 @@ namespace ActiveMQOperator
                                     // TODO:响应客户端。
                                     activeMQ.Send(data.Address, new Package(package.SessionID, "Response", package.Method, JsonConvert.SerializeObject(new
                                     {
-                                        Result,
-                                        //Friends = 
+                                        Result
                                     })).ToString());
                                 }
 
