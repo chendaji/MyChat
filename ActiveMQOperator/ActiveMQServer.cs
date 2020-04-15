@@ -232,7 +232,7 @@ namespace ActiveMQOperator
             {
                 Address,
                 FriendUsername,
-                FriendNickname,
+                FriendNickname, 
                 FriendAddress,
             }));
 

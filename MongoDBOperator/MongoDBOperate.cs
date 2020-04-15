@@ -103,8 +103,14 @@ namespace MongoDBOperator
 
         public User AddFriend(Friends friends)
         {
+            Friends friend2 = new Friends();
+            friend2.Id = new Guid().ToString();
+            friend2.UserID = friends.FriendID;
+            friend2.FriendID = friends.UserID;
             FriendsHelper.Insert(friends);
+            FriendsHelper.Insert(friend2);
             User userInfo = UserHelper.SelectOne(new Document("UserName", friends.FriendID));
+
             return userInfo;
         }
         //获取用户信息
