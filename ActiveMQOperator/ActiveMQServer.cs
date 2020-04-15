@@ -82,7 +82,7 @@ namespace ActiveMQOperator
                                     activeMQ.Send(data.Address, new Package(package.SessionID, "Response", package.Method, JsonConvert.SerializeObject(new
                                     {
                                         Result,
-                                        Friends = 
+                                      //  Friends = 
                                     })).ToString());
                                 }
 
