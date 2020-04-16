@@ -26,6 +26,7 @@ namespace MyChat
             Client.ChatReceived += Client_ChatReceived;
             Client.FriendAddedNotice += Client_FriendAddedNotice;
             Client.AddFriendResponse += Client_AddFriendResponse;
+            Client.GetMyFriendsResponse += Client_GetMyFriendsResponse;
         }
         Dictionary<string, FormChat> Chats = new Dictionary<string, FormChat>();
         private void Client_ChatReceived(object sender, Tuple<string, string> e)
@@ -109,6 +110,7 @@ namespace MyChat
                 {
                     foreach (var friend in MyFriends)
                     {
+                        
                         //将姓名子节点加到姓名父节点上去
                         TreeNode n = new TreeNode(friend.NickName);
                         n.Tag = friend;
@@ -196,6 +198,12 @@ namespace MyChat
                 }
             }));
             MessageBox.Show("用户" + user.NickName + "您添加为好友");
+        }
+
+        //刷新好友信息
+        private void bFresh_Click(object sender, EventArgs e)
+        {
+            Client.GetMyFriends(UserName);
         }
     }
 }

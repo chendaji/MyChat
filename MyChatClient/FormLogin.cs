@@ -36,7 +36,7 @@ namespace MyChat
                 switch (result.Item1)
                 {
                     case 0:
-                        MessageBox.Show("登录成功。");
+                      //  MessageBox.Show("登录成功。");
                         UserName = Username;
                         DialogResult = DialogResult.OK;
                         this.Close();

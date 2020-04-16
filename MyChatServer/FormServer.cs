@@ -146,6 +146,17 @@ namespace MyChatServer
             Invoke(new Action(() =>
             {
                 MyFriends = mongoDBOperate.GetMyFriends(e.Item1);
+                for (int i = 0; i < MyFriends.Count; i++)
+                {
+                    for (int j = 0; j < lVOnlineUsers.Items.Count; j++)
+                    {
+                        if (MyFriends[i].UserName.Equals(lVOnlineUsers.Items[j].Text))
+                        {
+                            //将在线好友地址添加进去
+                            MyFriends[i].Address = lVOnlineUsers.Items[j].SubItems[2].Text;
+                        }
+                    }
+                }
                 code = 0;
             }));
             return new Tuple<int, List<User>>(code, MyFriends);

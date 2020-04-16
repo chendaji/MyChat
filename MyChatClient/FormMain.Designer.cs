@@ -36,6 +36,7 @@
             this.TVFriends = new System.Windows.Forms.TreeView();
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.bFresh = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -60,7 +61,7 @@
             // 
             // modifyData
             // 
-            this.modifyData.Location = new System.Drawing.Point(162, 46);
+            this.modifyData.Location = new System.Drawing.Point(214, 46);
             this.modifyData.Name = "modifyData";
             this.modifyData.Size = new System.Drawing.Size(83, 23);
             this.modifyData.TabIndex = 3;
@@ -70,7 +71,7 @@
             // 
             // addFriends
             // 
-            this.addFriends.Location = new System.Drawing.Point(285, 46);
+            this.addFriends.Location = new System.Drawing.Point(316, 46);
             this.addFriends.Name = "addFriends";
             this.addFriends.Size = new System.Drawing.Size(84, 23);
             this.addFriends.TabIndex = 4;
@@ -108,11 +109,22 @@
             this.comboBox1.TabIndex = 7;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
+            // bFresh
+            // 
+            this.bFresh.Location = new System.Drawing.Point(118, 46);
+            this.bFresh.Name = "bFresh";
+            this.bFresh.Size = new System.Drawing.Size(75, 23);
+            this.bFresh.TabIndex = 8;
+            this.bFresh.Text = "刷新好友";
+            this.bFresh.UseVisualStyleBackColor = true;
+            this.bFresh.Click += new System.EventHandler(this.bFresh_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(532, 773);
+            this.Controls.Add(this.bFresh);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.TVFriends);
@@ -139,5 +151,6 @@
         private System.Windows.Forms.TreeView TVFriends;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Button bFresh;
     }
 }
