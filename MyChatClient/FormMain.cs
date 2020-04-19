@@ -15,7 +15,6 @@ namespace MyChat
     public partial class FormMain : Form
     {
         ActiveMQClient Client = new ActiveMQClient();
-        ActiveMQClient TopicClient = new ActiveMQClient();
         List<User> MyFriends = new List<User>();
         string UserName;
         string Address;
