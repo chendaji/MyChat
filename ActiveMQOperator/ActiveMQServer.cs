@@ -8,12 +8,14 @@ namespace ActiveMQOperator
     public class ActiveMQServer
     {
         ActiveMQOperate activeMQ = new ActiveMQOperate();
+        ActiveMQOperate TopicactiveMQ = new ActiveMQOperate();
 
         public void Start()
         {
             activeMQ.Connect("MyChat");
-
+            TopicactiveMQ.TopicConnect();
             activeMQ.Received += ActiveMQ_Received;
+            TopicactiveMQ.Received += ActiveMQ_Received;
         }
 
         //前面参数输入，后面返回参数
@@ -23,7 +25,7 @@ namespace ActiveMQOperator
 
         public event Func<Tuple<string, string>, Tuple<int, List<User>>> SearchFriendsRequest;
         //返回自己和朋友信息 code eurrentUser friend
-        public event Func<Tuple<string, string>, Tuple<int, User,User>> AddFriendRequest;
+        public event Func<Tuple<string, string>, Tuple<int, User, User>> AddFriendRequest;
 
         public event Func<Tuple<string>, Tuple<int, List<User>>> GetMyFriendsRequest;
 
@@ -83,6 +85,12 @@ namespace ActiveMQOperator
                                     {
                                         Result
                                     })).ToString());
+                                    // 广播地址
+                                    TopicactiveMQ.TopicSend("Topic", new Package(package.SessionID, "Notice", "FriendLoginNotice", JsonConvert.SerializeObject(new
+                                    {
+                                        Username = data.Username,
+                                        Address = data.Address
+                                    })).ToString()); ;
                                 }
 
                                 break;
@@ -232,7 +240,7 @@ namespace ActiveMQOperator
             {
                 Address,
                 FriendUsername,
-                FriendNickname, 
+                FriendNickname,
                 FriendAddress,
             }));
 

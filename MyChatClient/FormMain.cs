@@ -15,8 +15,10 @@ namespace MyChat
     public partial class FormMain : Form
     {
         ActiveMQClient Client = new ActiveMQClient();
+        ActiveMQClient TopicClient = new ActiveMQClient();
         List<User> MyFriends = new List<User>();
         string UserName;
+        string Address;
 
         public FormMain()
         {
@@ -27,19 +29,21 @@ namespace MyChat
             Client.FriendAddedNotice += Client_FriendAddedNotice;
             Client.AddFriendResponse += Client_AddFriendResponse;
             Client.GetMyFriendsResponse += Client_GetMyFriendsResponse;
+            Client.FriendLoginNotice += Client_FriendLoginNotice;
         }
         Dictionary<string, FormChat> Chats = new Dictionary<string, FormChat>();
         private void Client_ChatReceived(object sender, Tuple<string, string> e)
         {
+            // 当前用户,聊天好友，好友NickName，好友Address
+            // Get Nickname and Address by e.Item1(Friend Username)
+            string FirnedUserName = e.Item1;
+            string FriendNickName = "";
+            string FriendAddress = "";
             Invoke(new Action(() =>
             {
                 if (!Chats.ContainsKey(e.Item1))
                 {
-                    // 当前用户,聊天好友，好友NickName，好友Address
-                    // Get Nickname and Address by e.Item1(Friend Username)
-                    string FirnedUserName = e.Item1;
-                    string FriendNickName = "";
-                    string FriendAddress = "";
+
                     foreach (User friendInfo in MyFriends)
                     {
                         if (FirnedUserName.Equals(friendInfo.UserName))
@@ -59,10 +63,13 @@ namespace MyChat
         FormLogin formLogin;
         protected override void OnLoad(EventArgs e)
         {
-            Client.Start();
+            Guid id = Guid.NewGuid();
+            //当前用户的地址
+            this.Address = id.ToString().ToUpper(); ;
+            Client.Start(id);
             base.OnLoad(e);
             // TODO:连接 MQ
-            formLogin = new FormLogin(Client);
+            formLogin = new FormLogin(id, Client);
 
             formLogin.ShowDialog();
             UserName = formLogin.UserName;
@@ -83,8 +90,6 @@ namespace MyChat
 
             }
             userName.Text = UserName;
-            //  Client.GetMyFriends(UserName);
-            //   Client.GetMyFriendsResponse += Client_GetMyFriendsResponse;
         }
 
         private void Meun_Load(object sender, EventArgs e)
@@ -110,7 +115,7 @@ namespace MyChat
                 {
                     foreach (var friend in MyFriends)
                     {
-                        
+
                         //将姓名子节点加到姓名父节点上去
                         TreeNode n = new TreeNode(friend.NickName);
                         n.Tag = friend;
@@ -138,6 +143,11 @@ namespace MyChat
         private void TVFriends_DoubleClick(object sender, EventArgs e)
         {
             TreeNode node = TVFriends.SelectedNode;
+            if (node.Text.ToString().Equals("我的好友"))
+            {
+                MessageBox.Show("请选择一名好友！");
+                return;
+            }
             if (node == null) { MessageBox.Show("Node is null"); return; }
             //好友信息
             User userInfo = (User)node.Tag;
@@ -186,7 +196,7 @@ namespace MyChat
             //data.FriendUsername, data.FriendNickname, data.FriendAddress
             int code = e.Item1;
             User user = e.Item2;
-
+            this.MyFriends.Add(user);
             Invoke(new Action(() =>
             {
                 foreach (TreeNode node in TVFriends.Nodes)
@@ -199,11 +209,23 @@ namespace MyChat
             }));
             MessageBox.Show("用户" + user.NickName + "您添加为好友");
         }
-
-        //刷新好友信息
-        private void bFresh_Click(object sender, EventArgs e)
+        //好友登录通知好友地址
+        private void Client_FriendLoginNotice(object sender, Tuple<string, string> e)
         {
-            Client.GetMyFriends(UserName);
+            if (e != null)
+            {
+                string FriendUserName = e.Item1;
+                string Address = e.Item2;
+                for (int i=0;i< this.MyFriends.Count;i++)
+                {
+                    if (this.MyFriends[i].UserName.Equals(FriendUserName))
+                    {
+                        this.MyFriends[i].Address = Address;
+                    }
+                }
+            }
+
         }
+
     }
 }

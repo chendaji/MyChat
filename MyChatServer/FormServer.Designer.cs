@@ -28,21 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lBUsername = new System.Windows.Forms.ListBox();
             this.lVOnlineUsers = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SuspendLayout();
-            // 
-            // lBUsername
-            // 
-            this.lBUsername.FormattingEnabled = true;
-            this.lBUsername.ItemHeight = 15;
-            this.lBUsername.Location = new System.Drawing.Point(38, 24);
-            this.lBUsername.Name = "lBUsername";
-            this.lBUsername.Size = new System.Drawing.Size(214, 349);
-            this.lBUsername.TabIndex = 0;
             // 
             // lVOnlineUsers
             // 
@@ -51,7 +41,7 @@
             this.columnHeader2,
             this.columnHeader3});
             this.lVOnlineUsers.HideSelection = false;
-            this.lVOnlineUsers.Location = new System.Drawing.Point(284, 24);
+            this.lVOnlineUsers.Location = new System.Drawing.Point(139, 30);
             this.lVOnlineUsers.Name = "lVOnlineUsers";
             this.lVOnlineUsers.Size = new System.Drawing.Size(756, 346);
             this.lVOnlineUsers.TabIndex = 1;
@@ -79,7 +69,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1099, 450);
             this.Controls.Add(this.lVOnlineUsers);
-            this.Controls.Add(this.lBUsername);
             this.Name = "FormServer";
             this.Text = "FormServer";
             this.ResumeLayout(false);
@@ -87,8 +76,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.ListBox lBUsername;
         private System.Windows.Forms.ListView lVOnlineUsers;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;

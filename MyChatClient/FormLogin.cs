@@ -14,14 +14,16 @@ namespace MyChat
 
         public List<User> MyFriends;
 
+        public Guid MyGuId;
 
         public string Username => tBUsername.Text;
         public string Password => tBPassword.Text;
 
         public string UserName { get => userName; set => userName = value; }
 
-        public FormLogin(ActiveMQClient Client)
+        public FormLogin(Guid id, ActiveMQClient Client)
         {
+            this.MyGuId = id;
             this.Client = Client;
             Client.UserLoginResponse += Client_UserLoginResponse;
             InitializeComponent();
@@ -53,7 +55,7 @@ namespace MyChat
 
         private void bLogin_Click(object sender, EventArgs e)
         {
-            Client.UserLogin(Username, Password);
+            Client.UserLogin(this.MyGuId, Username, Password);
         }
 
         private void bRegister_Click(object sender, EventArgs e)

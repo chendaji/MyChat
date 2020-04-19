@@ -18,23 +18,23 @@ namespace MyChat
         //当前用户
         string CurrentUser;
         //选择聊天的用户
-        string ToUserName;
-        string NickName;
+        string FriendUserName;
+        string FriendNickName;
         //static ActiveMQOperate activeMQ = new ActiveMQOperate();
         ActiveMQClient Client;
         Guid guid = Guid.NewGuid();
-        string Address;
+        string FriendAddress;
         // 当前用户，好友NickName，好友Address
-        public FormChat(string CurrentUser, string ToUserName, string NickName, string Address, ActiveMQClient Client)
+        public FormChat(string CurrentUser, string FriendUserName, string FriendNickName, string FriendAddress, ActiveMQClient Client)
         {
             this.CurrentUser = CurrentUser;
-            this.ToUserName = ToUserName;
-            this.NickName = NickName;
+            this.FriendUserName = FriendUserName;
+            this.FriendNickName = FriendNickName;
             InitializeComponent();
-            this.Text = "正在和" + NickName + "聊天";
+            this.Text = "正在和" + FriendNickName + "聊天";
             //activeMQ.Connect("MyChat");
             //activeMQ.Received += ActiveMQ_Received;
-            this.Address = Address;
+            this.FriendAddress = FriendAddress;
             this.Client = Client;
         }
 
@@ -51,7 +51,7 @@ namespace MyChat
             // "Connect",
             //text);
 
-            Client.Chat(Address, CurrentUser, tMessage.Text);
+            Client.Chat(FriendAddress, CurrentUser, tMessage.Text);
         }
         //private void ActiveMQ_Received(object sender, string e)
         //{
@@ -69,7 +69,7 @@ namespace MyChat
         {
             Invoke(new Action(() =>
             {
-                this.rtAllMsg.AppendText($"\r\n{NickName}({DateTime.Now}):\r\n{Message}");
+                this.rtAllMsg.AppendText($"\r\n{FriendNickName}({DateTime.Now}):\r\n{Message}");
                 this.rtAllMsg.SelectionAlignment = HorizontalAlignment.Left;
             }));
         }

@@ -68,9 +68,6 @@ namespace MyChatServer
                         }
                     }
                     friends.AddRange(users);
-
-                    // 将在线用户加入在线列表。
-                    lBUsername.Items.Add(arg.Item1);
                     lVOnlineUsers.Items.Add(new ListViewItem(new string[]
                {
                      userInfo.UserName,userInfo.NickName,arg.Item3

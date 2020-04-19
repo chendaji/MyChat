@@ -26,6 +26,21 @@ namespace ActiveMQOperator
             //注册监听事件
             consumer.Listener += new MessageListener(consumer_Listener);
         }
+        //广播连接
+        public void TopicConnect()
+        {
+            //MQ地址：tcp://localhost:61616
+            factory = new ConnectionFactory("tcp://localhost:61616");
+            connection = factory.CreateConnection();
+            //启动连接，监听的话要主动启动连接
+            connection.Start();
+            //通过连接创建一个会话
+            session = connection.CreateSession();
+            //通过会话创建一个消费者，这里就是Queue这种会话类型的监听参数设置
+            IMessageConsumer consumer = session.CreateConsumer(new Apache.NMS.ActiveMQ.Commands.ActiveMQTopic("Topic"));
+            //注册监听事件
+            consumer.Listener += new MessageListener(consumer_Listener);
+        }
 
         void consumer_Listener(IMessage message)
         {
@@ -50,6 +65,22 @@ namespace ActiveMQOperator
             {
                 //通过会话创建生产者，方法里面new出来的是MQ中的Queue
                 IMessageProducer prod = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQQueue(address));
+                //创建一个发送的消息对象
+                ITextMessage message = prod.CreateTextMessage();
+                //给这个对象赋实际的消息
+                message.Text = package;
+                //生产者把消息发送出去，几个枚举参数MsgDeliveryMode是否长链，MsgPriority消息优先级别，发送最小单位，当然还有其他重载
+                prod.Send(message, MsgDeliveryMode.NonPersistent, MsgPriority.Normal, TimeSpan.MinValue);
+            }
+        }
+        //每次每个用户登录成功之后广播地址给好友
+        public void TopicSend(String address, string package)
+        {
+            //通过连接创建Session会话
+            using (ISession session = connection.CreateSession())
+            {
+                //Create the Producer for the topic/queue   
+                IMessageProducer prod = session.CreateProducer(new Apache.NMS.ActiveMQ.Commands.ActiveMQTopic("Topic"));
                 //创建一个发送的消息对象
                 ITextMessage message = prod.CreateTextMessage();
                 //给这个对象赋实际的消息

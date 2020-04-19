@@ -11,15 +11,17 @@ namespace ActiveMQOperator
     public class ActiveMQClient
     {
         ActiveMQOperate activeMQ = new ActiveMQOperate();
+        ActiveMQOperate TopicactiveMQ = new ActiveMQOperate();
         public string Address { get; private set; }
 
-        public void Start()
+        public void Start(Guid id)
         {
-            Address = Guid.NewGuid().ToString().ToUpper();
-
+            // Address = Guid.NewGuid().ToString().ToUpper();
+            Address = id.ToString().ToUpper();
             activeMQ.Connect(Address);
-
             activeMQ.Received += ActiveMQ_Received;
+            TopicactiveMQ.TopicConnect();
+            TopicactiveMQ.Received += ActiveMQ_Received;
         }
 
 
@@ -31,7 +33,8 @@ namespace ActiveMQOperator
         public event EventHandler<Tuple<int, User>> GetUserInfoResponse;
         public event EventHandler<Tuple<int>> UpdateUserInfoResponse;
         public event EventHandler<int> LogoutResponse;
-
+        // friend login notice address
+        public event EventHandler<Tuple<string, string>> FriendLoginNotice;
 
         public event EventHandler<Tuple<int, User, User>> FriendAddedNotice;
 
@@ -174,6 +177,19 @@ namespace ActiveMQOperator
                                     FriendAddedNotice?.Invoke(this, data.Result);
                                 }
                                 break;
+                            //好友登录广播地址
+                            case "FriendLoginNotice":
+                                 {
+
+                                    var data = JsonConvert.DeserializeAnonymousType(package.Data, new
+                                    {
+                                        Username = default(string),
+                                        Address = default(string)
+                                    }); ;
+
+                                    FriendLoginNotice?.Invoke(this, new Tuple<string, string>(data.Username, data.Address));
+                                }
+                                break;
                         }
                     }
                     break;
@@ -219,9 +235,9 @@ namespace ActiveMQOperator
             activeMQ.Send("MyChat", package.ToString());
         }
 
-        public void UserLogin(string Username, string Password)
+        public void UserLogin(Guid id, string Username, string Password)
         {
-            var id = Guid.NewGuid();
+            //var id = Guid.NewGuid();
 
             var package = new Package(id, "Request", nameof(UserLogin), JsonConvert.SerializeObject(new
             {
