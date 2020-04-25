@@ -64,6 +64,7 @@ namespace MyChatServer
                             {
                                 //将在线好友地址添加进去
                                 users[i].Address = lVOnlineUsers.Items[j].SubItems[2].Text;
+                                users[i].Status = "在线";
                             }
                         }
                     }
@@ -88,15 +89,25 @@ namespace MyChatServer
             return code;
         }
 
-        //查找好友请求
-        private Tuple<int, List<User>> Server_SearchFriendsRequest(Tuple<string, string> e)
+        //查找好友请求   Address,MyUserName, Condition
+        private Tuple<int, List<User>> Server_SearchFriendsRequest(Tuple<string, string, string> e)
         {
             List<User> allUsers = new List<User>();
             int code = -1;
             Invoke(new Action(() =>
             {
                 //查询所有用户
-                allUsers = mongoDBOperate.SearchFriends(e.Item1);
+                allUsers = mongoDBOperate.SearchFriends(e.Item2, e.Item3);
+                for (int i = 0; i < allUsers.Count; i++)
+                {
+                    for (int j = 0; j < lVOnlineUsers.Items.Count; j++)
+                    {
+                        if (lVOnlineUsers.Items[j].Text.Equals(allUsers[i].UserName))
+                        {
+                            allUsers[i].Status = "在线";
+                        }
+                    }
+                }
                 code = 0;
             }));
 

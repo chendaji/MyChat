@@ -121,7 +121,6 @@
             this.tPassWord.Name = "tPassWord";
             this.tPassWord.Size = new System.Drawing.Size(116, 25);
             this.tPassWord.TabIndex = 2;
-            this.tPassWord.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // tConfirnPassword
             // 
@@ -129,7 +128,6 @@
             this.tConfirnPassword.Name = "tConfirnPassword";
             this.tConfirnPassword.Size = new System.Drawing.Size(116, 25);
             this.tConfirnPassword.TabIndex = 2;
-            this.tConfirnPassword.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // tNickName
             // 
@@ -137,7 +135,6 @@
             this.tNickName.Name = "tNickName";
             this.tNickName.Size = new System.Drawing.Size(116, 25);
             this.tNickName.TabIndex = 2;
-            this.tNickName.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // tSex
             // 
@@ -145,7 +142,6 @@
             this.tSex.Name = "tSex";
             this.tSex.Size = new System.Drawing.Size(116, 25);
             this.tSex.TabIndex = 2;
-            this.tSex.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // tAge
             // 
@@ -153,7 +149,6 @@
             this.tAge.Name = "tAge";
             this.tAge.Size = new System.Drawing.Size(116, 25);
             this.tAge.TabIndex = 2;
-            this.tAge.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // FormModify
             // 
@@ -175,7 +170,6 @@
             this.Controls.Add(this.bModify);
             this.Name = "FormModify";
             this.Text = "Modifydata";
-            this.Load += new System.EventHandler(this.FormModify_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

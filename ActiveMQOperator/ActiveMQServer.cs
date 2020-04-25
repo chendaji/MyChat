@@ -23,7 +23,7 @@ namespace ActiveMQOperator
 
         public event Func<Tuple<string, string, string>, Tuple<int, List<User>>> UserLoginRequest;
 
-        public event Func<Tuple<string, string>, Tuple<int, List<User>>> SearchFriendsRequest;
+        public event Func<Tuple<string, string, string>, Tuple<int, List<User>>> SearchFriendsRequest;
         //返回自己和朋友信息 code eurrentUser friend
         public event Func<Tuple<string, string>, Tuple<int, User, User>> AddFriendRequest;
 
@@ -90,7 +90,7 @@ namespace ActiveMQOperator
                                     {
                                         Username = data.Username,
                                         Address = data.Address
-                                    })).ToString()); ;
+                                    })).ToString());
                                 }
 
                                 break;
@@ -99,13 +99,14 @@ namespace ActiveMQOperator
                                     var data = JsonConvert.DeserializeAnonymousType(package.Data, new
                                     {
                                         Address = default(string),
+                                        MyUserName = default(string),
                                         Condition = default(string)
                                     });
 
                                     if (data.Address == null) break;
 
                                     // TODO:数据库处理。
-                                    var Result = SearchFriendsRequest?.Invoke(new Tuple<string, string>(data.Address, data.Condition));
+                                    var Result = SearchFriendsRequest?.Invoke(new Tuple<string, string, string>(data.Address, data.MyUserName, data.Condition));
 
                                     // TODO:响应客户端。
                                     activeMQ.Send(data.Address, new Package(package.SessionID, "Response", package.Method, JsonConvert.SerializeObject(new
@@ -211,13 +212,14 @@ namespace ActiveMQOperator
 
                                     if (data.Address == null) break;
 
-                                    // TODO:数据库处理。
+                                    // 数据库处理。
                                     var Result = LogoutRequest?.Invoke(data.UserName);
 
-                                    // TODO:响应客户端。
-                                    activeMQ.Send(data.Address, new Package(package.SessionID, "Response", package.Method, JsonConvert.SerializeObject(new
+                                    // 广播好友退出信息
+                                    TopicactiveMQ.TopicSend("Topic", new Package(package.SessionID, "Notice", "Logout", JsonConvert.SerializeObject(new
                                     {
-                                        Result
+                                        Result,
+                                        data.UserName
                                     })).ToString());
                                 }
                                 break;

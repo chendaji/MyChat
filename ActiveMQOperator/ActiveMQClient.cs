@@ -32,7 +32,7 @@ namespace ActiveMQOperator
         public event EventHandler<Tuple<int, List<User>>> GetMyFriendsResponse;
         public event EventHandler<Tuple<int, User>> GetUserInfoResponse;
         public event EventHandler<Tuple<int>> UpdateUserInfoResponse;
-        public event EventHandler<int> LogoutResponse;
+        public event EventHandler<Tuple<int, string>> LogoutResponse;
         // friend login notice address
         public event EventHandler<Tuple<string, string>> FriendLoginNotice;
 
@@ -143,20 +143,6 @@ namespace ActiveMQOperator
                                     }
                                 }
                                 break;
-                            case nameof(Logout):
-                                {
-                                    if (Sessions.ContainsKey(package.SessionID))
-                                    {
-                                        var data = JsonConvert.DeserializeAnonymousType(package.Data, new
-                                        {
-                                            Result = default(int)
-
-                                        });
-
-                                        LogoutResponse?.Invoke(this, data.Result);
-                                    }
-                                }
-                                break;
                             default:
                                 break;
                         }
@@ -179,15 +165,31 @@ namespace ActiveMQOperator
                                 break;
                             //好友登录广播地址
                             case "FriendLoginNotice":
-                                 {
-
-                                    var data = JsonConvert.DeserializeAnonymousType(package.Data, new
+                                {
+                                    if (!Sessions.ContainsKey(package.SessionID))
                                     {
-                                        Username = default(string),
-                                        Address = default(string)
-                                    }); ;
+                                        var data = JsonConvert.DeserializeAnonymousType(package.Data, new
+                                        {
+                                            Username = default(string),
+                                            Address = default(string)
+                                        }); ;
 
-                                    FriendLoginNotice?.Invoke(this, new Tuple<string, string>(data.Username, data.Address));
+                                        FriendLoginNotice?.Invoke(this, new Tuple<string, string>(data.Username, data.Address));
+                                    }
+                                }
+                                break;
+                            case "Logout":
+                                {
+                                    if (!Sessions.ContainsKey(package.SessionID))
+                                    {
+                                        var data = JsonConvert.DeserializeAnonymousType(package.Data, new
+                                        {
+                                            Result = default(int),
+                                            UserName = default(string)
+                                        });
+
+                                        LogoutResponse?.Invoke(this, new Tuple<int, string>(data.Result, data.UserName));
+                                    }
                                 }
                                 break;
                         }
@@ -252,12 +254,13 @@ namespace ActiveMQOperator
         }
 
         //查找好友（目前是还没条件查找，默认列出所有好友）
-        public void SearchFriends(string Condition)
+        public void SearchFriends(string myUserName,string Condition)
         {
             var id = Guid.NewGuid();
             var package = new Package(id, "Request", nameof(SearchFriends), JsonConvert.SerializeObject(new
             {
                 Address,
+                myUserName,
                 Condition
             }));
             Sessions[id] = package;

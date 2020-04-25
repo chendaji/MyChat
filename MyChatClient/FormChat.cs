@@ -52,6 +52,8 @@ namespace MyChat
             //text);
 
             Client.Chat(FriendAddress, CurrentUser, tMessage.Text);
+            tMessage.Text = "";
+            tMessage.Focus();
         }
         //private void ActiveMQ_Received(object sender, string e)
         //{

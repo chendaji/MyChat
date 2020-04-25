@@ -22,6 +22,8 @@ namespace MyChat
             InitializeComponent();
             this.UserName = UserName;
             this.Client = Client;
+            Client.GetUserInfoResponse += Client_GetUserInfoResponse;
+            Client.UpdateUserInfoResponse += Client_UpdateUserInfoResponse;
             Client.GetUserInfo(UserName);
         }
         private void Client_GetUserInfoResponse(object sender, Tuple<int, User> result)
@@ -72,15 +74,6 @@ namespace MyChat
                 MessageBox.Show("两次密码输入不一致!");
                 tPassWord.Focus();
             }
-
-        }
-        private void FormModify_Load(object sender, EventArgs e)
-        {
-            Client.GetUserInfoResponse += Client_GetUserInfoResponse;
-            Client.UpdateUserInfoResponse += Client_UpdateUserInfoResponse;
-        }
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
 
         }
 

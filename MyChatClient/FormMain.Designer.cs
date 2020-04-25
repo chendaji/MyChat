@@ -28,14 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("我的好友");
             this.userName = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.modifyData = new System.Windows.Forms.Button();
             this.addFriends = new System.Windows.Forms.Button();
-            this.TVFriends = new System.Windows.Forms.TreeView();
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.lVMyFriends = new System.Windows.Forms.ListView();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -78,18 +79,6 @@
             this.addFriends.UseVisualStyleBackColor = true;
             this.addFriends.Click += new System.EventHandler(this.addFriends_Click);
             // 
-            // TVFriends
-            // 
-            this.TVFriends.Location = new System.Drawing.Point(-1, 75);
-            this.TVFriends.Name = "TVFriends";
-            treeNode1.Name = "节点1";
-            treeNode1.Text = "我的好友";
-            this.TVFriends.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode1});
-            this.TVFriends.Size = new System.Drawing.Size(320, 550);
-            this.TVFriends.TabIndex = 5;
-            this.TVFriends.DoubleClick += new System.EventHandler(this.TVFriends_DoubleClick);
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -108,14 +97,36 @@
             this.comboBox1.TabIndex = 7;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
+            // lVMyFriends
+            // 
+            this.lVMyFriends.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2});
+            this.lVMyFriends.HideSelection = false;
+            this.lVMyFriends.Location = new System.Drawing.Point(12, 84);
+            this.lVMyFriends.Name = "lVMyFriends";
+            this.lVMyFriends.Size = new System.Drawing.Size(328, 478);
+            this.lVMyFriends.TabIndex = 8;
+            this.lVMyFriends.UseCompatibleStateImageBehavior = false;
+            this.lVMyFriends.View = System.Windows.Forms.View.Details;
+            this.lVMyFriends.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lVMyFriends_MouseDoubleClick);
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "我的好友";
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "状态";
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(532, 773);
+            this.Controls.Add(this.lVMyFriends);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.TVFriends);
             this.Controls.Add(this.addFriends);
             this.Controls.Add(this.modifyData);
             this.Controls.Add(this.pictureBox1);
@@ -136,8 +147,10 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button modifyData;
         private System.Windows.Forms.Button addFriends;
-        private System.Windows.Forms.TreeView TVFriends;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ListView lVMyFriends;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
     }
 }

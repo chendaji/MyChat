@@ -16,6 +16,8 @@ namespace MongoDBOperator
         String sex;
         // 在线地址
         string address;
+        // 在线状态
+        string status="离线";
 
         public string UserName { get => userName; set => userName = value; }
         public string Password { get => password; set => password = value; }
@@ -24,5 +26,6 @@ namespace MongoDBOperator
         public string Sex { get => sex; set => sex = value; }
         public string Id { get => id; set => id = value; }
         public string Address { get => address; set => address = value; }
+        public string Status { get => status; set => status = value; }
     }
 }

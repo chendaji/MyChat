@@ -76,10 +76,10 @@ namespace MongoDBOperator
             return code;
         }
 
-        //查询好友
-        public List<User> SearchFriends(string condition)
+        //查询好友 MyUserName, Condition
+        public List<User> SearchFriends(string MyUserName, string condition)
         {
-            // TODO: 数据库操作
+            List<Friends> friendList = FriendsHelper.SelectMore(new Document("UserID", MyUserName));
             List<User> list = UserHelper.SelectALl();
             return list;
         }
@@ -116,7 +116,7 @@ namespace MongoDBOperator
         //获取用户信息
         public User GetUserInfo(string UserName)
         {
-            User userInfo = UserHelper.SelectOne(new Document("UserName",UserName));
+            User userInfo = UserHelper.SelectOne(new Document("UserName", UserName));
             return userInfo;
         }
         //更新用户信息

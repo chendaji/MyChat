@@ -23,12 +23,10 @@ namespace MyChat
         {
             InitializeComponent();
             System.Windows.Forms.Control.CheckForIllegalCrossThreadCalls = false;//设置该属性 为false
-
             Client.ChatReceived += Client_ChatReceived;
             Client.FriendAddedNotice += Client_FriendAddedNotice;
             Client.AddFriendResponse += Client_AddFriendResponse;
-            Client.GetMyFriendsResponse += Client_GetMyFriendsResponse;
-            Client.FriendLoginNotice += Client_FriendLoginNotice;
+            Client.LogoutResponse += Client_LogoutResponse;
         }
         Dictionary<string, FormChat> Chats = new Dictionary<string, FormChat>();
         private void Client_ChatReceived(object sender, Tuple<string, string> e)
@@ -72,21 +70,19 @@ namespace MyChat
 
             formLogin.ShowDialog();
             UserName = formLogin.UserName;
+            // 监听好友登录事件
+            Client.FriendLoginNotice += Client_FriendLoginNotice;
             MyFriends = formLogin.MyFriends;
             //显示我的好友
-            foreach (TreeNode node in TVFriends.Nodes)
+            if (MyFriends != null)
             {
-                if (MyFriends != null)
+                foreach (var friend in MyFriends)
                 {
-                    foreach (var friend in MyFriends)
-                    {
-                        //将姓名子节点加到姓名父节点上去
-                        TreeNode n = new TreeNode(friend.NickName);
-                        n.Tag = friend;
-                        node.Nodes.Add(n);
-                    }
+                    //将姓名子节点加到姓名父节点上去
+                    ListViewItem listView = new ListViewItem(new string[] { friend.NickName, friend.Status });
+                    listView.Tag = friend;
+                    lVMyFriends.Items.Add(listView);
                 }
-
             }
             userName.Text = UserName;
         }
@@ -103,26 +99,26 @@ namespace MyChat
             {
                 comboBox1.Items.Add(item[i]);
             }
-            //todo 查询数据库，获取好友列表
         }
-        public void Client_GetMyFriendsResponse(object sender, Tuple<int, List<User>> result)
-        {
-            Invoke(new Action(() =>
-            {
-                MyFriends = result.Item2;
-                foreach (TreeNode node in TVFriends.Nodes)
-                {
-                    foreach (var friend in MyFriends)
-                    {
+        //public void Client_GetMyFriendsResponse(object sender, Tuple<int, List<User>> result)
+        //{
+        //    Invoke(new Action(() =>
+        //    {
+        //        MyFriends = result.Item2;
+        //        foreach (TreeNode node in TVFriends.Nodes)
+        //        {
+        //            foreach (var friend in MyFriends)
+        //            {
 
-                        //将姓名子节点加到姓名父节点上去
-                        TreeNode n = new TreeNode(friend.NickName);
-                        n.Tag = friend;
-                        node.Nodes.Add(n);
-                    }
-                }
-            }));
-        }
+        //                //将姓名子节点加到姓名父节点上去
+        //                TreeNode n = new TreeNode(friend.NickName);
+        //                n.Tag = friend;
+        //                node.Nodes.Add(n);
+        //                lVMyFriends.Items.Add(new ListViewItem(new string[] { friend.NickName, "在线"}));
+        //            }
+        //        }
+        //    }));
+        //}
         private void modifyData_Click(object sender, EventArgs e)
         {
             FormModify formModify = new FormModify(UserName, Client);
@@ -134,35 +130,9 @@ namespace MyChat
         }
         private void addFriends_Click(object sender, EventArgs e)
         {
-            FormSearch formSearch = new FormSearch(Client, UserName);
+            FormSearch formSearch = new FormSearch(Client, UserName,this.MyFriends);
             formSearch.Show();
 
-        }
-
-        private void TVFriends_DoubleClick(object sender, EventArgs e)
-        {
-            TreeNode node = TVFriends.SelectedNode;
-            if (node.Text.ToString().Equals("我的好友"))
-            {
-                MessageBox.Show("请选择一名好友！");
-                return;
-            }
-            if (node == null) { MessageBox.Show("Node is null"); return; }
-            //好友信息
-            User userInfo = (User)node.Tag;
-            if (!Chats.ContainsKey(userInfo.UserName))
-            {
-                Chats[userInfo.UserName] = new FormChat(UserName, userInfo.UserName, node.Text, userInfo.Address, Client);
-            }
-            Chats[userInfo.UserName].Show();
-            Chats[userInfo.UserName].BringToFront();
-        }
-
-        private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            //退出登录
-            Client.Logout(UserName);
-            Application.Exit();
         }
         //主动添加好友通知
         //返回自己和朋友信息 code eurrentUser friendInfo
@@ -173,14 +143,10 @@ namespace MyChat
                 if (e.Item1 == 0)
                 {
                     User firnedInfo = e.Item3;
-                    foreach (TreeNode node in TVFriends.Nodes)
-                    {
-                        //将姓名子节点加到姓名父节点上去
-                        TreeNode n = new TreeNode(firnedInfo.NickName);
-                        n.Tag = firnedInfo;
-                        node.Nodes.Add(n);
-                    }
-
+                    //将姓名子节点加到姓名父节点上去
+                    ListViewItem listView = new ListViewItem(new string[] { firnedInfo.NickName, firnedInfo.Status });
+                    listView.Tag = firnedInfo;
+                    lVMyFriends.Items.Add(listView);
                 }
                 else
                 {
@@ -198,33 +164,97 @@ namespace MyChat
             this.MyFriends.Add(user);
             Invoke(new Action(() =>
             {
-                foreach (TreeNode node in TVFriends.Nodes)
-                {
-                    //将姓名子节点加到姓名父节点上去
-                    TreeNode n = new TreeNode(user.NickName);
-                    n.Tag = user;
-                    node.Nodes.Add(n);
-                }
+                ListViewItem listView = new ListViewItem(new string[] { user.NickName, user.Status });
+                listView.Tag = user;
+                lVMyFriends.Items.Add(listView);
             }));
             MessageBox.Show("用户" + user.NickName + "您添加为好友");
         }
         //好友登录通知好友地址
         private void Client_FriendLoginNotice(object sender, Tuple<string, string> e)
         {
-            if (e != null)
+            if (e != null && this.UserName != e.Item1)
             {
-                string FriendUserName = e.Item1;
-                string Address = e.Item2;
-                for (int i=0;i< this.MyFriends.Count;i++)
+                Invoke(new Action(() =>
                 {
-                    if (this.MyFriends[i].UserName.Equals(FriendUserName))
+                    string FriendUserName = e.Item1;
+                    string Address = e.Item2;
+                    for (int i = 0; i < this.MyFriends.Count; i++)
                     {
-                        this.MyFriends[i].Address = Address;
+                        if (this.MyFriends[i].UserName.Equals(FriendUserName))
+                        {
+                            this.MyFriends[i].Address = Address;
+                            this.MyFriends[i].Status = "在线";
+                        }
                     }
-                }
+                    for (int i = 0; i < lVMyFriends.Items.Count; i++)
+                    {
+                        User userInfo = lVMyFriends.Items[i].Tag as User;
+                        if (FriendUserName.Equals(userInfo.UserName))
+                        {
+                            //将在线好友状态加进去
+                            lVMyFriends.Items[i].SubItems[1].Text = "在线";
+                        }
+                    }
+                }));
             }
 
         }
+        //双击好友聊天
+        private void lVMyFriends_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            ListViewHitTestInfo info = lVMyFriends.HitTest(e.X, e.Y);
+            var listView = info.Item as ListViewItem;
+            if (listView.Text.ToString().Equals("我的好友"))
+            {
+                MessageBox.Show("请选择一名好友！");
+                return;
+            }
+            if (listView == null) { MessageBox.Show("请选择一名好友"); return; }
+            //好友信息
+            User userInfo = (User)listView.Tag;
+            if (!Chats.ContainsKey(userInfo.UserName))
+            {
+                Chats[userInfo.UserName] = new FormChat(UserName, userInfo.UserName, listView.Text, userInfo.Address, Client);
+            }
+            Chats[userInfo.UserName].Show();
+            Chats[userInfo.UserName].BringToFront();
+        }
+        // 关闭程序退出登录
+        private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            //退出登录
+            Client.Logout(UserName);
+            Application.Exit();
+        }
+        //好友退出通知
+        private void Client_LogoutResponse(object sender, Tuple<int, string> e)
+        {
+            if (e != null && this.UserName != e.Item2)
+            {
+                Invoke(new Action(() =>
+                {
+                    string LogoutName = e.Item2;
+                    for (int i = 0; i < this.MyFriends.Count; i++)
+                    {
+                        if (this.MyFriends[i].UserName.Equals(LogoutName))
+                        {
+                            this.MyFriends[i].Address = null;
+                            this.MyFriends[i].Status = "离线";
+                        }
+                    }
+                    for (int i = 0; i < lVMyFriends.Items.Count; i++)
+                    {
+                        User userInfo = lVMyFriends.Items[i].Tag as User;
+                        if (LogoutName.Equals(userInfo.UserName))
+                        {
+                            //将在线好友状态加进去
+                            lVMyFriends.Items[i].SubItems[1].Text = "离线";
+                        }
+                    }
+                }));
+            }
 
+        }
     }
 }

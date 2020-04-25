@@ -2,12 +2,6 @@
 using MongoDBOperator;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MyChat
@@ -16,15 +10,15 @@ namespace MyChat
     {
         ActiveMQClient Client;
         string UserName;
+        List<User> MyFriends;
 
-        public FormSearch(ActiveMQClient Client, string UserName)
+        public FormSearch(ActiveMQClient Client, string UserName, List<User> MyFriends)
         {
             InitializeComponent();
             this.Client = Client;
             this.UserName = UserName;
-
+            this.MyFriends = MyFriends;
             Client.FriendsSearchedResponse += Client_FriendsSearchedResponse;
-           // Client.AddFriendResponse += Client_AddFriendResponse;
         }
 
         private void Client_FriendsSearchedResponse(object sender, List<User> friends)
@@ -32,37 +26,21 @@ namespace MyChat
             lVFriends.Items.Clear();
             foreach (var friend in friends)
             {
-                //排除自己，不塞自己进去
-                if (!UserName.Equals(friend.UserName))
+                if (friend.UserName.Equals(UserName))
                 {
-                    lVFriends.Items.Add(new ListViewItem(new string[]
-                  {
-                     friend.UserName,friend.NickName,"离线"
-                  }));
+                    continue;
                 }
 
+                lVFriends.Items.Add(new ListViewItem(new string[]
+                      {
+                           friend.UserName,friend.NickName,friend.Status
+                     }));
             }
-        }
-        private void Client_AddFriendResponse(object sender, Tuple<int, User> e)
-        {
-            Invoke(new Action(() =>
-            {
-                if (e.Item1 == 0)
-                {
-                    MessageBox.Show("添加好友成功");
-
-                }
-                else
-                {
-                    MessageBox.Show("添加好友失败");
-                }
-            }));
-
         }
 
         private void bSearchFriend_Click(object sender, EventArgs e)
         {
-            Client.SearchFriends("");
+            Client.SearchFriends(this.UserName, "");
         }
 
 
@@ -72,7 +50,17 @@ namespace MyChat
             {
                 foreach (ListViewItem item in lVFriends.SelectedItems)
                 {
-                    Client.AddFriend(UserName, item.Text);
+                    foreach (var userInfo in MyFriends)
+                    {
+                        if (userInfo.UserName.Equals(item.Text))
+                        {
+                            MessageBox.Show("该用户已经是您的好友");
+                        }
+                        else
+                        {
+                            Client.AddFriend(UserName, item.Text);
+                        }
+                    }
                 }
             }
 
