@@ -56,6 +56,10 @@ namespace MyChat
                         {
                             MessageBox.Show("该用户已经是您的好友");
                         }
+                        else if (item.SubItems[2].Text.Equals("离线"))
+                        {
+                            MessageBox.Show("该用户不在线不能添加");
+                        }
                         else
                         {
                             Client.AddFriend(UserName, item.Text);
