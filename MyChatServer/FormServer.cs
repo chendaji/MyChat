@@ -128,7 +128,9 @@ namespace MyChatServer
             Invoke(new Action(() =>
             {
                 FiendInfo = mongoDBOperate.AddFriend(friend);
+                FiendInfo.Status = "在线";
                 MyInfo = mongoDBOperate.GetUserInfo(friend.UserID);
+                MyInfo.Status = "在线";
                 code = 0;
                 for (int i = 0; i < lVOnlineUsers.Items.Count; i++)
                 {
