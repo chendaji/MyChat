@@ -64,5 +64,10 @@ namespace MyChat
 
             formRegister.ShowDialog();
         }
+
+        private void FormLogin_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

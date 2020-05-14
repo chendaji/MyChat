@@ -89,16 +89,7 @@ namespace MyChat
 
         private void Meun_Load(object sender, EventArgs e)
         {
-            //禁止在文本编辑框输入数据的组合框样式
-            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            //下拉列表中最多允许显示3个选项
-            comboBox1.MaxDropDownItems = 3;
-            string[] item = { "在线", "离线", "忙碌" };
-            //把数据选项逐个添加到组合框的列表中
-            for (int i = 0; i < item.Length; i++)
-            {
-                comboBox1.Items.Add(item[i]);
-            }
+         
         }
         //public void Client_GetMyFriendsResponse(object sender, Tuple<int, List<User>> result)
         //{

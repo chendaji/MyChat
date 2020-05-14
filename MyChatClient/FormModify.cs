@@ -33,7 +33,7 @@ namespace MyChat
                 if (this.IsDisposed) return;
 
                 userInfo = result.Item2;
-                tUserName.Text = userInfo.UserName;
+                //tUserName.Text = userInfo.UserName;
                 tNickName.Text = userInfo.NickName;
                 tSex.Text = userInfo.Sex;
                 tAge.Text = userInfo.Age + "";
